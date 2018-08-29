@@ -1,32 +1,35 @@
 #include "../include/gdcrypto.hpp"
 
-std::string RobtopCipher_Encode(const char * Buffer, size_t Size, const std::string& Key)
+std::string RobtopCipher_Encode(
+	const std::vector<unsigned char>& Buffer,
+	const std::string& Key)
 {
-	std::string tmp;
+	std::vector<unsigned char> tmp;
 
-	for (unsigned int i = 0; i < Size; ++i)
-		tmp += (Buffer[i] ^ Key[i % Key.length()]);
+	for (auto i = 0; i < Buffer.size(); ++i)
+		tmp.push_back(Buffer[i] ^ Key[i % Key.length()]);
 
-	return base64_encode(reinterpret_cast<const unsigned char*>(tmp.c_str()), tmp.length());
+	return Base64_Encode(tmp);
 }
 
-std::string RobtopCipher_Decode(const std::string& Buffer, const std::string& Key)
+std::vector<unsigned char> RobtopCipher_Decode(
+	const std::string& Buffer,
+	const std::string& Key)
 {
-	size_t Size = 0;
-	std::string Result = base64_decode(Buffer.c_str(), Buffer.length(), &Size);
+	std::vector<unsigned char> Result = Base64_Decode(Buffer);
 
-	for (unsigned int i = 0; i < Size; ++i)
+	for (auto i = 0; i < Result.size(); ++i)
 		Result[i] ^= Key[i % Key.length()];
 
 	return Result;
 }
 
-//Add more chks dumbass
+//Add more chks
 std::string GenerateCHK(ServerChecks Type, const std::vector<std::string>& Args)
 {
 	SHA1 sha;
 	std::stringstream ss;
-	std::string key;
+	std::string key, final;
 
 	for (const auto & s : Args) 
 		ss << s;
@@ -51,83 +54,68 @@ std::string GenerateCHK(ServerChecks Type, const std::vector<std::string>& Args)
 	}
 
 	sha.update(ss.str());
-	return RobtopCipher_Encode(sha.final().c_str(), sha.final().length(), key);
+	final = sha.final();
+	return RobtopCipher_Encode(std::vector<unsigned char>(final.begin(), final.end()), key);
 }
 
-//Need tweaks
-std::string DecodeSavegame(char * Src, size_t SizeIn)
+std::string DecodeSavegame(
+	const std::vector<unsigned char>& Src)
 {
-	z_stream strm;
-	strm.zalloc = Z_NULL;
-	strm.zfree = Z_NULL;
-	strm.opaque = Z_NULL;
-	strm.avail_in = 0;
-	strm.next_in = Z_NULL;
-	int have = 0;
-	int input_data_left = 0;
-	int chunk_size = 0;
-	char buf[CHUNK];
+	z_stream Strm;
+	Strm.zalloc = Z_NULL;
+	Strm.zfree = Z_NULL;
+	Strm.opaque = Z_NULL;
+	Strm.avail_in = 0;
+	Strm.next_in = Z_NULL;
+	int State = 0, Have = 0, DataLeft = 0, ChunkSize = 0;
+	char Buf[CHUNK];
+	unsigned char * P;
+	std::vector<unsigned char> Buffer(Src);
+	std::string Output;
 
-	int state;
-	std::string Decoded, Output;
-	char * Buffer;
-	std::size_t DecodedSize;
+	for (auto i = 0; i < Buffer.size(); ++i)
+		Buffer[i] ^= 11;
+	Buffer = Base64_Decode(std::string(Buffer.begin(), Buffer.end()));
+	Buffer.erase(Buffer.begin(), Buffer.begin() + 10);
+	P = Buffer.data();
+	DataLeft = Buffer.size();
 
-	for (unsigned int i = 0; i < SizeIn; ++i)
-		Src[i] ^= 11;
-	Decoded = base64_decode(Src, SizeIn, &DecodedSize);
-
-	Buffer = (char*)calloc(1, DecodedSize);
-	memcpy(Buffer, Decoded.data(), DecodedSize);
-	Buffer += 10;
-	DecodedSize -= 10;
-
-	state = inflateInit2(&strm, -MAX_WBITS);
-
-	//add state check
-
-	input_data_left = DecodedSize;
+	State = inflateInit2(&Strm, -MAX_WBITS);
+	if (State != Z_OK) return std::string();
 
 	do 
 	{
-		chunk_size = CHUNK < input_data_left ? CHUNK : input_data_left;
-
-		if (chunk_size <= 0)
-			break;
-
-		strm.next_in = (unsigned char*)Buffer;
-		strm.avail_in = chunk_size;
-		Buffer += chunk_size;
-		input_data_left -= chunk_size;
+		ChunkSize = CHUNK < DataLeft ? CHUNK : DataLeft;
+		if (ChunkSize <= 0) break;
+		Strm.next_in = P;
+		P += ChunkSize;
+		Strm.avail_in = ChunkSize;
+		DataLeft -= ChunkSize;
 
 		do {
-			strm.next_out = (unsigned char*)buf;
-			strm.avail_out = CHUNK;
+			Strm.next_out = reinterpret_cast<unsigned char*>(Buf);
+			Strm.avail_out = CHUNK;
 
-			state = inflate(&strm, Z_NO_FLUSH);
+			State = inflate(&Strm, Z_NO_FLUSH);
 
-			switch (state) 
+			switch (State) 
 			{
 			case Z_NEED_DICT:
-				state = Z_DATA_ERROR;
+				State = Z_DATA_ERROR;
 			case Z_DATA_ERROR:
 			case Z_MEM_ERROR:
 			case Z_STREAM_ERROR:
-				inflateEnd(&strm);
-				free(Buffer);
+				inflateEnd(&Strm);
 				return std::string();
 			}
 
-			have = (CHUNK - strm.avail_out);
+			Have = (CHUNK - Strm.avail_out);
+			if (Have > 0) Output.append(Buf, Have);
 
-			if (have > 0)
-				Output.append((char*)buf, have);
+		} while (Strm.avail_out == 0);
 
-		} while (strm.avail_out == 0);
+	} while (State != Z_STREAM_END);
 
-	} while (state != Z_STREAM_END);
-
-	inflateEnd(&strm);
-	free(Buffer);
+	inflateEnd(&Strm);
 	return Output;
 }
