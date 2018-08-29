@@ -11,6 +11,6 @@ int main()
 	cout << "Encoded Password: " << encPwd << endl;
 	cout << "Decoded Password: " << decPwdS << endl;
   
-  cin.get();
-  return 0;
+  	cin.get();
+  	return 0;
 }
