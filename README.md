@@ -1,5 +1,7 @@
 # GDCrypto
 C++ library to encode/decode GD stuff [wip]
+## Todo
+Add more chks.
 ## How-to
 Just look at the examples or read the header, too lazy to write here.
 ## Compiling
