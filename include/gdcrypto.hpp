@@ -4,8 +4,6 @@
 #include <string>
 #include <sstream>
 #include <vector>
-#include <algorithm>
-#include <iterator>
 #include "base64.hpp"
 #include "sha1.hpp"
 #include "zlib/zlib.h"
@@ -48,27 +46,46 @@ typedef enum
 	DOWNLOAD_LEVEL_CHK = 3
 } ServerChecks;
 
-//Add description for each function
+/*  
+	Function: RobtopCipher_Encode()
 
-/**/
+	@Buffer: the data to be encoded
+	@Key: seed used by the algorithm
+
+	Returns: the encoded data on success,
+	an empty string on failure.
+*/
 std::string RobtopCipher_Encode(
-	const char * Buffer,
-	size_t Size,
+	const std::vector<unsigned char>& Buffer,
 	const std::string& Key);
 
-/**/
-std::string RobtopCipher_Decode(
+/*
+	Function: RobtopCipher_Decode()
+
+	@Buffer: the data to be decoded
+	@Key: seed used by the algorithm
+
+	Returns: the decoded data on success,
+	an empty string on failure.
+*/
+std::vector<unsigned char> RobtopCipher_Decode(
 	const std::string& Buffer, 
 	const std::string& Key);
 
-/**/
+/*Add description*/
 std::string GenerateCHK(
 	ServerChecks Type,
 	const std::vector<std::string>& Args);
 
-/**/
+/*
+	Function: DecodeSavegame()
+
+	@Src: the savegame data to be decoded
+
+	Returns: the decoded data on success,
+	an empty string on failure.
+*/
 std::string DecodeSavegame(
-	char * Src,
-	size_t SizeIn);
+	const std::vector<unsigned char>& Src);
 
 #endif
