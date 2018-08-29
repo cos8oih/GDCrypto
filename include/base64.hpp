@@ -2,8 +2,10 @@
 #define _base64_hpp
 
 #include <string>
+#include <vector>
+#include <iterator>
 
-std::string base64_encode(const unsigned char *src, size_t len);
-std::string base64_decode(const void* data, const size_t len, size_t * lenOut);
+std::string Base64_Encode(const std::vector<unsigned char>& Src);
+std::vector<unsigned char> Base64_Decode(const std::string& Src);
 
 #endif
