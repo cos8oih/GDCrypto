@@ -1,7 +1,9 @@
 # GDCrypto
 C++ library to encode/decode GD stuff [wip]
 ## Todo
-Add more chks.
+* Add more chks.
+* Add the ability to encode savegames for the sake of completion.
+* Add a Makefile.
 ## How-to
 Just look at the examples or read the header, too lazy to write here.
 ## Compiling
