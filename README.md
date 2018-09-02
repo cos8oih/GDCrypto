@@ -2,6 +2,7 @@
 C++ library to encode/decode GD stuff
 ## Todo
 * Add the ability to encode savegames for the sake of completion.
+* C bindings.
 * Add a Makefile.
 ## How-to
 Just look at the examples or read the header, too lazy to write here.
