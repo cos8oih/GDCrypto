@@ -1,16 +1,11 @@
-#include "include/gdcrypto.hpp"
+include "include/gdcrypto.hpp"
+#include <cassert>
 
 using namespace std;
 
 int main()
 {
-	string encPwd("fk5lU0VAQFpAUgIFBg==");
-	vector<unsigned char> decPwd = RobtopCipher_Decode(encPwd, GJP_KEY);
-	string decPwdS(decPwd.begin(), decPwd.end());
-  
-	cout << "Encoded Password: " << encPwd << endl;
-	cout << "Decoded Password: " << decPwdS << endl;
-  
-  	cin.get();
-  	return 0;
+	vector<unsigned char> pass = RobtopCipher_Decode("fk5lU0VAQFpAUgIFBg==", GJP_KEY);
+	assert(string(pass.begin(), pass.end()) == "MyPassword123");
+	return 0;
 }
