@@ -24,38 +24,55 @@ std::vector<unsigned char> RobtopCipher_Decode(
 	return Result;
 }
 
-//Add more chks
-std::string GenerateCHK(ServerChecks Type, const std::vector<std::string>& Args)
+std::string GenerateLevelUploadSeed(
+	const std::string& LevelString)
+{
+	std::string Result;
+
+	if (LevelString.size() < 49) return LevelString;
+
+	for (auto i = 0; i < 50; ++i)
+		Result += LevelString[(LevelString.size() / 50) * i];
+
+	return Result;
+}
+
+long GenerateLevelLeaderboardSeed(
+	unsigned long Jumps,
+	unsigned long Percentage,
+	unsigned long Seconds)
+{
+	return 1482 + (Jumps + 3991) * (Percentage + 8354) + pow(Seconds + 4085, 2) - 50028039;
+}
+
+std::string GenerateCHK(
+	const std::string& Key,
+	const std::vector<std::string>& Values,
+	const std::string& Salt)
 {
 	SHA1 sha;
 	std::stringstream ss;
-	std::string key, final;
+	std::string final;
 
-	for (const auto & s : Args) 
-		ss << s;
-
-	switch (Type)
+	if (Key == LEVELSCORE_KEY)
 	{
-	case LIKE_CHK:
-	case RATE_LEVEL_CHK:
-		key = std::string(LIKERATE_KEY);
-		ss << "ysg6pUrtjn0J";
-		break;
-	case UPLOAD_COMMENT_CHK:
-		key = std::string(COMMENT_KEY);
-		ss << "xPT6iUrtws0J";
-		break;
-	case DOWNLOAD_LEVEL_CHK:
-		key = std::string(LEVEL_KEY);
-		ss << "xI25fpAapCQg";
-		break;
-	default:
-		return std::string();
+		for (auto i = 0; i < Values.size() - 1; ++i)
+			ss << Values[i] << (i == 7 ? "1" : "");
+		ss << Salt << Values[Values.size() - 1];
+	}
+	else
+	{
+		for (const auto & s : Values)
+			ss << s;
+		ss << Salt;
 	}
 
 	sha.update(ss.str());
 	final = sha.final();
-	return RobtopCipher_Encode(std::vector<unsigned char>(final.begin(), final.end()), key);
+
+	return RobtopCipher_Encode(
+		std::vector<unsigned char>(final.begin(), final.end()),
+		Key);
 }
 
 std::string DecodeSavegame(
@@ -68,6 +85,7 @@ std::string DecodeSavegame(
 	Strm.avail_in = 0;
 	Strm.next_in = Z_NULL;
 	int State = 0, Have = 0, DataLeft = 0, ChunkSize = 0;
+	const int CHUNK = 16384;
 	char Buf[CHUNK];
 	unsigned char * P;
 	std::vector<unsigned char> Buffer(Src);
