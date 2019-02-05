@@ -47,7 +47,7 @@ const auto LIKERATE_KEY = "58281";
 */
 const auto USERSCORE_KEY = "85271";
 /*
-	CHK values: AccountID, LevelID, Percentage, Seconds, Jumps, Attempts, Seed, Bests Differences, UserCoins, DailyID, Seed7 ("s7" from packet)
+	CHK values: AccountID, LevelID, Percentage, Seconds, Jumps, Attempts, Seed, Bests Differences, UNKNOWN (always 1), UserCoins, DailyID, Seed7 ("s7" from packet)
 	Seconds = seconds taken to reach the best
 	Jumps = jumps taken to reach the best
 	Bests Differences = differences between bests, ex: 0% - 65% - 100% -> (65 - 0), (100 - 65) -> 65,35
