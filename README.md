@@ -11,7 +11,7 @@ C++ library that implements common Geometry Dash algorithms.
 ## How-to
 The main header file ([GDCrypto.hpp](Include/GDCrypto.hpp)) is fully documented; moreover, the [Tests](Tests) folder contains some examples about the library functionalities.
 ## Building
-CMake is required: clone this repo, then open the cmd and type 
+CMake is required: clone this repo, then open the cmd and type:
 ```
 mkdir Build
 cd Build
