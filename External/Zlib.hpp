@@ -31,7 +31,7 @@
 #ifndef ZLIB_H
 #define ZLIB_H
 
-#include "zconf.h"
+#include "Zconf.hpp"
 
 #ifdef __cplusplus
 extern "C" {
@@ -376,6 +376,7 @@ ZEXTERN int ZEXPORT deflateEnd OF((z_streamp strm));
 
 /*
 ZEXTERN int ZEXPORT inflateInit OF((z_streamp strm));
+
      Initializes the internal stream state for decompression.  The fields
    next_in, avail_in, zalloc, zfree and opaque must be initialized before by
    the caller.  In the current version of inflate, the provided input is not

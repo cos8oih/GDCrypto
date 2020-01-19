@@ -1,7 +1,8 @@
-#include "../include/base64.hpp"
+//This library is horrible, go fix it u maincra
+#include "External/base64.hpp"
+#include <string>
 
-static const unsigned char base64_table[65] =
-"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
+static std::string const dict("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_");
 
 static const int B64index[256] = { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
@@ -11,12 +12,15 @@ static const int B64index[256] = { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0
 0,  0,  0, 63,  0, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51 };
 
-std::string Base64_Encode(const std::vector<unsigned char>& Src)
+std::vector<uint8_t> Base64::encode(const std::vector<unsigned char>& Src)
 {
 	std::string Result;
+
+	auto base64_table = dict;
+
 	auto In = Src.begin();
 
-	while (Src.end() - In >= 3) 
+	while (Src.end() - In >= 3)
 	{
 		Result += base64_table[In[0] >> 2];
 		Result += base64_table[((In[0] & 0x03) << 4) | (In[1] >> 4)];
@@ -25,14 +29,14 @@ std::string Base64_Encode(const std::vector<unsigned char>& Src)
 		In += 3;
 	}
 
-	if (Src.end() - In) 
+	if (Src.end() - In)
 	{
 		Result += base64_table[In[0] >> 2];
 		if (Src.end() - In == 1) {
 			Result += base64_table[(In[0] & 0x03) << 4];
 			Result += '=';
 		}
-		else 
+		else
 		{
 			Result += base64_table[((In[0] & 0x03) << 4) |
 				(In[1] >> 4)];
@@ -41,11 +45,13 @@ std::string Base64_Encode(const std::vector<unsigned char>& Src)
 		Result += '=';
 	}
 
-	return Result;
+	return std::vector<uint8_t>(Result.begin(), Result.end());
 }
 
-std::vector<unsigned char> Base64_Decode(const std::string& Src)
+std::vector<unsigned char> Base64::decode(const std::vector<uint8_t>& buf)
 {
+	std::string Src = std::string(buf.begin(), buf.end());
+
 	int Pad = Src.length() > 0 && (Src.length() % 4 || Src[Src.length() - 1] == '=');
 	const size_t L = ((Src.length() + 3) / 4 - Pad) * 4;
 	std::vector<unsigned char> Result;

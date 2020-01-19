@@ -14,7 +14,7 @@
 		-- Eugene Hopkinson <slowriot at voxelstorm dot com>
 */
 
-#include "../include/sha1.hpp"
+#include "External/Sha1.hpp"
 #include <sstream>
 #include <iomanip>
 #include <fstream>
@@ -24,7 +24,7 @@ static const size_t BLOCK_INTS = 16;  /* number of 32bit integers per SHA1 block
 static const size_t BLOCK_BYTES = BLOCK_INTS * 4;
 
 
-static void reset(uint32_t digest[], std::string &buffer, uint64_t &transforms)
+static void reset(uint32_t digest[], std::string& buffer, uint64_t& transforms)
 {
 	/* SHA1 initialization constants */
 	digest[0] = 0x67452301;
@@ -55,41 +55,41 @@ static uint32_t blk(const uint32_t block[BLOCK_INTS], const size_t i)
  * (R0+R1), R2, R3, R4 are the different operations used in SHA1
  */
 
-static void R0(const uint32_t block[BLOCK_INTS], const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const size_t i)
+static void R0(const uint32_t block[BLOCK_INTS], const uint32_t v, uint32_t& w, const uint32_t x, const uint32_t y, uint32_t& z, const size_t i)
 {
-	z += ((w&(x^y)) ^ y) + block[i] + 0x5a827999 + rol(v, 5);
+	z += ((w & (x ^ y)) ^ y) + block[i] + 0x5a827999 + rol(v, 5);
 	w = rol(w, 30);
 }
 
 
-static void R1(uint32_t block[BLOCK_INTS], const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const size_t i)
+static void R1(uint32_t block[BLOCK_INTS], const uint32_t v, uint32_t& w, const uint32_t x, const uint32_t y, uint32_t& z, const size_t i)
 {
 	block[i] = blk(block, i);
-	z += ((w&(x^y)) ^ y) + block[i] + 0x5a827999 + rol(v, 5);
+	z += ((w & (x ^ y)) ^ y) + block[i] + 0x5a827999 + rol(v, 5);
 	w = rol(w, 30);
 }
 
 
-static void R2(uint32_t block[BLOCK_INTS], const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const size_t i)
+static void R2(uint32_t block[BLOCK_INTS], const uint32_t v, uint32_t& w, const uint32_t x, const uint32_t y, uint32_t& z, const size_t i)
 {
 	block[i] = blk(block, i);
-	z += (w^x^y) + block[i] + 0x6ed9eba1 + rol(v, 5);
+	z += (w ^ x ^ y) + block[i] + 0x6ed9eba1 + rol(v, 5);
 	w = rol(w, 30);
 }
 
 
-static void R3(uint32_t block[BLOCK_INTS], const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const size_t i)
+static void R3(uint32_t block[BLOCK_INTS], const uint32_t v, uint32_t& w, const uint32_t x, const uint32_t y, uint32_t& z, const size_t i)
 {
 	block[i] = blk(block, i);
-	z += (((w | x)&y) | (w&x)) + block[i] + 0x8f1bbcdc + rol(v, 5);
+	z += (((w | x) & y) | (w & x)) + block[i] + 0x8f1bbcdc + rol(v, 5);
 	w = rol(w, 30);
 }
 
 
-static void R4(uint32_t block[BLOCK_INTS], const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const size_t i)
+static void R4(uint32_t block[BLOCK_INTS], const uint32_t v, uint32_t& w, const uint32_t x, const uint32_t y, uint32_t& z, const size_t i)
 {
 	block[i] = blk(block, i);
-	z += (w^x^y) + block[i] + 0xca62c1d6 + rol(v, 5);
+	z += (w ^ x ^ y) + block[i] + 0xca62c1d6 + rol(v, 5);
 	w = rol(w, 30);
 }
 
@@ -98,7 +98,7 @@ static void R4(uint32_t block[BLOCK_INTS], const uint32_t v, uint32_t &w, const 
  * Hash a single 512-bit block. This is the core of the algorithm.
  */
 
-static void transform(uint32_t digest[], uint32_t block[BLOCK_INTS], uint64_t &transforms)
+static void transform(uint32_t digest[], uint32_t block[BLOCK_INTS], uint64_t& transforms)
 {
 	/* Copy digest[] to working vars */
 	uint32_t a = digest[0];
@@ -201,7 +201,7 @@ static void transform(uint32_t digest[], uint32_t block[BLOCK_INTS], uint64_t &t
 }
 
 
-static void buffer_to_block(const std::string &buffer, uint32_t block[BLOCK_INTS])
+static void buffer_to_block(const std::string& buffer, uint32_t block[BLOCK_INTS])
 {
 	/* Convert the std::string (byte buffer) to a uint32_t array (MSB) */
 	for (size_t i = 0; i < BLOCK_INTS; i++)
@@ -220,14 +220,14 @@ SHA1::SHA1()
 }
 
 
-void SHA1::update(const std::string &s)
+void SHA1::update(const std::string& s)
 {
 	std::istringstream is(s);
 	update(is);
 }
 
 
-void SHA1::update(std::istream &is)
+void SHA1::update(std::istream& is)
 {
 	while (true)
 	{
@@ -253,7 +253,7 @@ void SHA1::update(std::istream &is)
 std::string SHA1::final()
 {
 	/* Total number of hashed bits */
-	uint64_t total_bits = (transforms*BLOCK_BYTES + buffer.size()) * 8;
+	uint64_t total_bits = (transforms * BLOCK_BYTES + buffer.size()) * 8;
 
 	/* Padding */
 	buffer += (char)0x80;
@@ -295,7 +295,7 @@ std::string SHA1::final()
 }
 
 
-std::string SHA1::from_file(const std::string &filename)
+std::string SHA1::from_file(const std::string& filename)
 {
 	std::ifstream stream(filename.c_str(), std::ios::binary);
 	SHA1 checksum;
