@@ -5,14 +5,13 @@ C++ library that implements common Geometry Dash algorithms.
 * Finish C bindings
 * Finish writing tests
 * Finish documenting the library
-* Implement CMake build system
 * Bindings for other languages
 * Improve Base64 library
 * XML prettify utility
 ## How-to
 The main header file ([GDCrypto.hpp](Include/GDCrypto.hpp)) is fully documented; moreover, the [Tests](Tests) folder contains some examples about the library functionalities.
 ## Building
-GDCrypto was built and tested on Windows using Visual Studio 2019, other compilers aren't tested.
+CMake is required: clone this repo, then open the cmd and type `mkdir Build && cd Build && cmake .. -DZLIB_PATH=PATH/TO/ZLIB`. Both static and shared library projects will be built.
 ## Credits
 GDCrypto uses [Zlib](https://github.com/madler/zlib), [SHA1](https://github.com/vog/sha1), and Base64:
 * [Jouni Malinen's base64 encoder](http://web.mit.edu/freebsd/head/contrib/wpa/src/utils/base64.c)
