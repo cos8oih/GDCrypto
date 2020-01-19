@@ -10,7 +10,7 @@ C++ library that implements common Geometry Dash algorithms.
 * Improve Base64 library
 * XML prettify utility
 ## How-to
-The main header file ([GDCrypto.hpp](Include/GDCrypto.hpp)) is fully documented; moreover, thhe [Tests](Tests) folder contains some examples about the library functionalities.
+The main header file ([GDCrypto.hpp](Include/GDCrypto.hpp)) is fully documented; moreover, the [Tests](Tests) folder contains some examples about the library functionalities.
 ## Building
 GDCrypto was built and tested on Windows using Visual Studio 2019, other compilers aren't tested.
 ## Credits
