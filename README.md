@@ -1,17 +1,21 @@
 # GDCrypto
-C++ library to encode/decode GD stuff
+C++ library that implements common Geometry Dash algorithms.
 ## Todo
-* Add the ability to encode savegames for the sake of completion.
-* C bindings.
-* Add a Makefile.
+* Add data encoding algorithm
+* Finish C bindings
+* Finish writing tests
+* Finish documenting the library
+* Implement CMake build system
+* Bindings for other languages
+* Improve Base64 library
+* XML prettify utility
 ## How-to
-Just look at the examples or read the header, too lazy to write here.
-## Compiling
-GDCrypto was built on Visual Studio 2017, so other compilers aren't tested. To compile it, yo'll need zlib.
+The main header file ([GDCrypto.hpp](Include/GDCrypto.hpp)) is fully documented; moreover, thhe [Tests](Tests) folder contains some examples about the library functionalities.
+## Building
+GDCrypto was built and tested on Windows using Visual Studio 2019, other compilers aren't tested.
 ## Credits
-The `Base64_Encode()` function is based on the function made by Jouni Malinen, while `Base64_Decode()` is based on the function made by Polfosol. You can find both versions here:
+GDCrypto uses [Zlib](https://github.com/madler/zlib), [SHA1](https://github.com/vog/sha1), and Base64:
+* [Jouni Malinen's base64 encoder](http://web.mit.edu/freebsd/head/contrib/wpa/src/utils/base64.c)
+* [Polfosol's base64 decoder](https://stackoverflow.com/a/37109258)
 
-* [Jouni Malinen's base64 implementation](http://web.mit.edu/freebsd/head/contrib/wpa/src/utils/base64.c)
-* [Polfosol's base64 implementation](https://stackoverflow.com/a/37109258)
-
- I'd also like to thanks [Absolute](https://github.com/absoIute), who gave me an example code of how to use Inflate(), and [MgostIH](https://github.com/mgostIH), who gave me some tips on how to optimize the code.
+ I'd also like to thanks [Absolute](https://github.com/absoIute), who helped me with the inflate algorithm, and [MgostIH](https://github.com/mgostIH), who gave me some tips on how to optimize the code.
