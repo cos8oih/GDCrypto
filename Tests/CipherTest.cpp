@@ -1,5 +1,6 @@
 //C++ application which encode/decode passwords
 #include "Include/GDCrypto.hpp"
+#include <chrono>
 
 using namespace GDCrypto;
 

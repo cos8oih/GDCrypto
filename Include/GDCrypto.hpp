@@ -29,6 +29,16 @@
 #include <string>
 #include <iostream>
 
+#if defined(GDCRYPTO_BUILD)
+	#if defined(_MSC_VER)
+		#define GDCRYPTO_API __declspec(dllexport)
+	#else
+		#define GDCRYPTO_API __attribute__((visibility("default")))
+	#endif
+#else
+	#define GDCRYPTO_API
+#endif
+
 namespace GDCrypto
 {
 	namespace Keys
@@ -225,7 +235,7 @@ namespace GDCrypto
 		operation, where every char of the result string is XORed with a
 		character of the key (also a string).
 	*/
-	class RobTopCipher
+	class GDCRYPTO_API RobTopCipher
 	{
 	public:
 		typedef enum
@@ -268,7 +278,7 @@ namespace GDCrypto
 		RobTopCipher& operator>>(std::ostream& out) { return this->digest(out); }
 	};
 
-	class RobTopEncoder
+	class GDCRYPTO_API RobTopEncoder
 		: public RobTopCipher
 	{
 	public:
@@ -291,29 +301,26 @@ namespace GDCrypto
 		The algorithm used is deflate + base64 (url safe) for encoding, base64 +
 		inflate for decoding. A XOR operation can be applied before of the algorithm.
 	*/
-	class DataCipher
+	class GDCRYPTO_API DataCipher
 	{
 	public:
 		typedef enum
 		{
 			ENCODE,
 			DECODE
-		} ManagerType;
+		} CipherType;
 	protected:
 		std::vector<uint8_t> m_vBuffer;
 		std::vector<uint8_t> m_vKey;
-		ManagerType m_eType;
+		CipherType m_eType;
 	public:
-		DataCipher(ManagerType const type)
+		DataCipher(CipherType const type)
 			: m_eType(type) {}
 		DataCipher(
 			std::vector<uint8_t> const& key,
-			ManagerType const type)
+			CipherType const type)
 			: m_vKey(key),
 			m_eType(type) {}
-		
-		void enableXorWithKey(std::vector<uint8_t> const& key) { m_vKey = key; }
-		void disableXor() { m_vKey.clear(); }
 
 		DataCipher& insert(std::vector<uint8_t> const& buffer);
 		DataCipher& insert(std::string const& s);
@@ -339,48 +346,36 @@ namespace GDCrypto
 		DataCipher& operator>>(std::ostream& out) { return this->digest(out); }
 	};
 
-	class LevelEncoder
+	class GDCRYPTO_API LevelEncoder
 		: public DataCipher
 	{
 	public:
 		LevelEncoder()
 			: DataCipher(DataCipher::ENCODE) {}
-
-		void enableXorWithKey(std::vector<uint8_t> const& key) = delete;
-		void disableXor() = delete;
 	};
 
-	class LevelDecoder
+	class GDCRYPTO_API LevelDecoder
 		: public DataCipher
 	{
 	public:
 		LevelDecoder()
 			: DataCipher(DataCipher::DECODE) {}
-
-		void enableXorWithKey(std::vector<uint8_t> const& key) = delete;
-		void disableXor() = delete;
 	};
 
-	class SavegameEncoder
+	class GDCRYPTO_API SavegameEncoder
 		: public DataCipher
 	{
 	public:
 		SavegameEncoder()
 			: DataCipher({ 11 }, DataCipher::ENCODE) {}
-
-		void enableXorWithKey(std::vector<uint8_t> const& key) = delete;
-		void disableXor() = delete;
 	};
 
-	class SavegameDecoder
+	class GDCRYPTO_API SavegameDecoder
 		: public DataCipher
 	{
 	public:
 		SavegameDecoder()
 			: DataCipher({ 11 }, DataCipher::DECODE) {}
-		
-		void enableXorWithKey(std::vector<uint8_t> const& key) = delete;
-		void disableXor() = delete;
 	};
 
 	/*
@@ -392,7 +387,7 @@ namespace GDCrypto
 		The raw data is a combination of various values and a salt, which
 		also differs between checks.
 	*/
-	class CheckGenerator
+	class GDCRYPTO_API CheckGenerator
 	{
 	protected:
 		std::vector<uint8_t> m_vBuffer;
@@ -429,6 +424,55 @@ namespace GDCrypto
 		CheckGenerator& operator>>(std::string& s) { return this->digest(s); }
 		CheckGenerator& operator>>(std::ostream& out) { return this->digest(out); }
 	};
+}
+
+//C bindings
+
+extern "C"
+{
+	//RobTopCipher
+
+	GDCRYPTO_API void* RobTopCipher_createEncoder(uint8_t const* key, size_t const key_size);
+	GDCRYPTO_API void* RobTopCipher_createDecoder(uint8_t const* key, size_t const key_size);
+	GDCRYPTO_API void RobTopCipher_destroy(void* cipher);
+
+	GDCRYPTO_API void RobTopCipher_insert(
+		void* cipher,
+		uint8_t const* buffer,
+		size_t const size);
+	GDCRYPTO_API uint8_t* RobTopCipher_digest(void* cipher, size_t* size);
+
+	//DataCipher
+
+	GDCRYPTO_API void* DataCipher_createEncoder(uint8_t const* key, size_t const key_size);
+	GDCRYPTO_API void* DataCipher_createDecoder(uint8_t const* key, size_t const key_size);
+
+	GDCRYPTO_API void* DataCipher_createLevelEncoder();
+	GDCRYPTO_API void* DataCipher_createLevelDecoder();
+
+	GDCRYPTO_API void* DataCipher_createSavegameEncoder();
+	GDCRYPTO_API void* DataCipher_createSavegameDecoder();
+
+	GDCRYPTO_API void DataCipher_destroy(void* cipher);
+
+	GDCRYPTO_API void DataCipher_insert(
+		void* cipher,
+		uint8_t const* buffer,
+		size_t const size);
+	GDCRYPTO_API uint8_t* DataCipher_digest(void* p_cipher, size_t* size);
+
+	//CheckGenerator
+
+	GDCRYPTO_API void* CheckGenerator_create(
+		uint8_t const* key, size_t const key_size,
+		char const* salt, size_t const salt_size);
+	GDCRYPTO_API void CheckGenerator_destroy(void* chkgen);
+
+	GDCRYPTO_API void CheckGenerator_insert(
+		void* generator,
+		uint8_t const* buffer,
+		size_t const size);
+	GDCRYPTO_API uint8_t* CheckGenerator_digest(void* generator, size_t* size);
 }
 
 #endif /* _GDCrypto_hpp */

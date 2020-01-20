@@ -24,12 +24,6 @@
 #ifndef _GDCrypto_h
 #define _GDCrypto_h
 
-#if defined(__cplusplus)
-#include <cstdint>
-
-extern "C"
-{
-#else
 #include <stdint.h>
 
 //Xor keys
@@ -55,8 +49,6 @@ extern "C"
 #define USERSCORE_SALT	"xI35fsAapCRg"
 #define LEVELSCORE_SALT	"yPg6pUrtWn0J"
 
-#endif /* __cplusplus */
-
 //RobTopCipher
 
 void* RobTopCipher_createEncoder(char const* key, size_t const key_size);
@@ -65,6 +57,10 @@ void RobTopCipher_destroy(void* cipher);
 
 void RobTopCipher_insert(void* cipher, uint8_t const* buffer, size_t const size);
 uint8_t const* RobTopCipher_digest(void* cipher, size_t* size);
+
+//DataCipher
+
+
 
 //CheckGenerator
 
@@ -75,9 +71,5 @@ void CheckGenerator_destroy(void* chkgen);
 
 void CheckGenerator_insert(void* chkgen, uint8_t const* buffer, size_t const size);
 uint8_t const* CheckGenerator_digest(void* chkgen, size_t* size);
-
-#if defined(__cplusplus)
-}
-#endif
 
 #endif /* _GDCrypto_h */

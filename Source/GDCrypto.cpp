@@ -1,8 +1,9 @@
+#define GDCRYPTO_BUILD
+
 #include "External/Zlib.hpp"
 #include "External/Base64.hpp"
 #include "External/Sha1.hpp"
 #include "Include/GDCrypto.hpp"
-#include "Include/GDCrypto.h"
 #include <algorithm>
 
 using namespace GDCrypto;
@@ -239,38 +240,38 @@ void* RobTopCipher_create(
 	return NULL;
 }
 
-void* RobTopCipher_createEncoder(uint8_t const* key, size_t const size)
+void* RobTopCipher_createEncoder(uint8_t const* key, size_t const key_size)
 {
-	return RobTopCipher_create(key, size, RobTopCipher::ENCODE);
+	return RobTopCipher_create(key, key_size, RobTopCipher::ENCODE);
 }
 
-void* RobTopCipher_createDecoder(uint8_t const* key, size_t const size)
+void* RobTopCipher_createDecoder(uint8_t const* key, size_t const key_size)
 {
-	return RobTopCipher_create(key, size, RobTopCipher::DECODE);
+	return RobTopCipher_create(key, key_size, RobTopCipher::DECODE);
 }
 
-void RobTopCipher_destroy(void* cipher)
+void RobTopCipher_destroy(void* p_cipher)
 { 
-	if (cipher)
-		delete reinterpret_cast<RobTopCipher*>(cipher);
+	if (p_cipher)
+		delete reinterpret_cast<RobTopCipher*>(p_cipher);
 }
 
-void RobTopCipher_insert(void* pcipher, uint8_t const* buffer, size_t const size)
+void RobTopCipher_insert(void* p_cipher, uint8_t const* buffer, size_t const size)
 {
-	if (pcipher && buffer && size)
+	if (p_cipher && buffer && size)
 	{
-		auto cipher = reinterpret_cast<RobTopCipher*>(pcipher);
+		auto cipher = reinterpret_cast<RobTopCipher*>(p_cipher);
 		std::vector<uint8_t> buf(buffer, buffer + size);
 
 		cipher->insert(buf);
 	}
 }
 
-uint8_t const* RobTopCipher_digest(void* pcipher, size_t* size)
+uint8_t* RobTopCipher_digest(void* p_cipher, size_t* size)
 {
-	if (pcipher)
+	if (p_cipher)
 	{
-		auto cipher = reinterpret_cast<RobTopCipher*>(pcipher);
+		auto cipher = reinterpret_cast<RobTopCipher*>(p_cipher);
 		std::vector<uint8_t> buf;
 
 		cipher->digest(buf);
@@ -368,6 +369,80 @@ DataCipher& DataCipher::digest(std::ostream& out)
 }
 
 //DataCipher (C bindings)
+
+void* DataCipher_create(
+	uint8_t const* key,
+	size_t const size,
+	DataCipher::CipherType type)
+{
+	if (key && size)
+		return reinterpret_cast<void*>(
+			new DataCipher(
+				std::vector<uint8_t>(key, key + size), type));
+
+	return NULL;
+}
+
+void* DataCipher_createLevelEncoder()
+{
+	return reinterpret_cast<void*>(new DataCipher(DataCipher::ENCODE));
+}
+
+void* DataCipher_createLevelDecoder()
+{
+	return reinterpret_cast<void*>(new DataCipher(DataCipher::DECODE));
+}
+
+void* DataCipher_createSavegameEncoder()
+{
+	return reinterpret_cast<void*>(new DataCipher({ 11 }, DataCipher::ENCODE));
+}
+
+void* DataCipher_createSavegameDecoder()
+{
+	return reinterpret_cast<void*>(new DataCipher({ 11 }, DataCipher::DECODE));
+}
+
+void DataCipher_destroy(void* p_cipher)
+{
+	if (p_cipher)
+		delete reinterpret_cast<DataCipher*>(p_cipher);
+}
+
+void DataCipher_insert(
+	void* p_cipher,
+	uint8_t const* buffer,
+	size_t const size)
+{
+	if (p_cipher)
+	{
+		auto cipher = reinterpret_cast<DataCipher*>(p_cipher);
+		std::vector<uint8_t> buf(buffer, buffer + size);
+
+		cipher->insert(buf);
+	}
+}
+
+uint8_t* DataCipher_digest(void* p_cipher, size_t* size)
+{
+	if (p_cipher)
+	{
+		auto cipher = reinterpret_cast<DataCipher*>(p_cipher);
+		std::vector<uint8_t> buf;
+
+		cipher->digest(buf);
+
+		auto p = bufferToData(buf);
+
+		if (p)
+		{
+			if (size) *size = buf.size();
+			return p;
+		}
+	}
+
+	return NULL;
+}
 
 //CheckGenerator
 
@@ -476,7 +551,7 @@ void CheckGenerator_insert(void* chkgen, uint8_t const* buffer, size_t const siz
 	}
 }
 
-uint8_t const* CheckGenerator_digest(void* chkgen, size_t* size)
+uint8_t* CheckGenerator_digest(void* chkgen, size_t* size)
 {
 	if (chkgen)
 	{
