@@ -107,7 +107,60 @@ void inflateBuffer(std::vector<uint8_t>& buf, bool newLevelData)
 	buf = out;
 }
 
-void deflateBuffer(std::vector<uint8_t>& buf) {}
+void deflateBuffer(std::vector<uint8_t>& buf)
+{
+	z_stream stream = {};
+	std::vector<uint8_t> out;
+
+	auto buffer = new uint8_t[CHUNK_SIZE];
+	size_t dataLeft = buf.size();
+
+	stream.next_in = buf.data();
+
+	auto state = deflateInit2(
+		&stream,
+		Z_DEFAULT_COMPRESSION,
+		Z_DEFLATED,
+		31,
+		8,
+		Z_DEFAULT_STRATEGY);
+
+	if (state != Z_OK)
+		return;
+
+	while (state != Z_STREAM_END)
+	{
+		stream.next_in += stream.avail_in;
+		stream.avail_in = CHUNK_SIZE < dataLeft ? CHUNK_SIZE : dataLeft;
+
+		if (stream.avail_in <= 0)
+			return;
+
+		dataLeft -= stream.avail_in;
+
+		do
+		{
+			stream.avail_out = CHUNK_SIZE;
+			stream.next_out = buffer;
+
+			state = deflate(&stream, Z_FINISH);
+
+			if (state != Z_OK &&
+				state != Z_STREAM_END)
+				break;
+
+			auto bufferSize = CHUNK_SIZE - stream.avail_out;
+
+			if (bufferSize)
+				appendBuffer(out, dataToBuffer(buffer, bufferSize));
+
+		} while (!stream.avail_out);
+	}
+
+	deflateEnd(&stream);
+	delete[] buffer;
+	buf = out;
+}
 
 //RobTopCipher
 
@@ -258,7 +311,11 @@ DataCipher& DataCipher::digest(std::vector<uint8_t>& buffer)
 
 	if (m_eType == ENCODE)
 	{
-		//Unimplemented
+		deflateBuffer(buffer);
+		buffer = Base64::encode(buffer);
+
+		if (!m_vKey.empty())
+			Utility::xorWithKey(buffer, m_vKey);
 	}
 	else if (m_eType == DECODE)
 	{

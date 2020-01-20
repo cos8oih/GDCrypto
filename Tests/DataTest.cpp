@@ -16,7 +16,7 @@ void encode(std::string const& path)
 	if (in.is_open() && out.is_open())
 	{
 		encoder << in >> out;
-		std::cout << "Decoded file written to: \""
+		std::cout << "Encoded file written to: \""
 			<< path + ".dat\"" << std::endl;
 	}
 	else

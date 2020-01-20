@@ -15,14 +15,24 @@ set (GDCRYPTO_SRC
     ../Source/GDCrypto.cpp
 )
 
-#define libraries
+#Define libraries
 ADD_LIBRARY(gdcrypto SHARED ${GDCRYPTO_SRC})
 ADD_LIBRARY(gdcrypto-static STATIC ${GDCRYPTO_SRC})
 
 #Link libraries
 if (DEFINED ZLIB_PATH)
-    target_link_libraries(gdcrypto ${ZLIB_PATH})
-    target_link_libraries(gdcrypto-static ${ZLIB_PATH})
+    TARGET_LINK_LIBRARIES(gdcrypto ${ZLIB_PATH})
+    TARGET_LINK_LIBRARIES(gdcrypto-static ${ZLIB_PATH})
 else()
-    message(WARNING "Zlib path not set!!!")
+    MESSAGE(FATAL_ERROR "Zlib path not set!!!")
 endif()
+
+#Define tests
+ADD_EXECUTABLE(ciphertest "./Tests/CipherTest.cpp")
+TARGET_LINK_LIBRARIES(ciphertest gdcrypto-static)
+
+ADD_EXECUTABLE(datatest "./Tests/DataTest.cpp")
+TARGET_LINK_LIBRARIES(datatest gdcrypto-static)
+
+ADD_EXECUTABLE(checktest "./Tests/CheckTest.cpp")
+TARGET_LINK_LIBRARIES(checktest gdcrypto-static)

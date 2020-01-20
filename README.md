@@ -1,10 +1,9 @@
 # GDCrypto
 C++ library that implements common Geometry Dash algorithms.
 ## Todo
-* Add data encoding algorithm
+* Fix data encoding algorithm
 * Finish C bindings
 * Finish writing tests
-* Finish documenting the library
 * Bindings for other languages
 * Improve Base64 library
 * XML prettify utility

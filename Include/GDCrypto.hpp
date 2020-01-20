@@ -24,6 +24,7 @@
 #ifndef _GDCrypto_hpp
 #define _GDCrypto_hpp
 
+#include <cmath>
 #include <vector>
 #include <string>
 #include <iostream>
@@ -42,17 +43,17 @@ namespace GDCrypto
 			Message key
 			Used to encode/decode messages
 		*/
-		static std::string const MESSAGE_KEY("14251");
+		static std::vector<uint8_t> const MESSAGE_KEY = { 0x31, 0x34, 0x32, 0x35, 0x31 };
 
 		/*
 			Level key
 			Used when generating level checks in requests
 
-			Level downloading check (chk): LevelID + Inc + RS + AccountID +
-			UDID + UUID
-			Level uploading check (seed2): LevelSeed
+			Level downloading check (chk): LevelID + Inc + RS + AccountID + UDID + UUID
+			Level uploading check (seed2): levelSeed
+			Generate "levelSeed" using the utility function
 		*/
-		static std::string const LEVEL_KEY("41274");
+		static std::vector<uint8_t> const LEVEL_KEY = { 0x34, 0x31, 0x32, 0x37, 0x34 };
 
 		/*
 			Comment key
@@ -61,7 +62,7 @@ namespace GDCrypto
 			Comment check (chk): Username + Comment + LevelID + Percentage +
 			Comment Type (0 = Level, 1 = User)
 		*/
-		static std::string const COMMENT_KEY("29481");
+		static std::vector<uint8_t> const COMMENT_KEY = { 0x32, 0x39, 0x34, 0x38, 0x31 };
 
 		/*
 			Challenges key
@@ -69,7 +70,7 @@ namespace GDCrypto
 
 			Challenges check (chk): 5 random chars + Random number
 		*/
-		static std::string const CHALLENGES_KEY("19847");
+		static std::vector<uint8_t> const CHALLENGES_KEY = { 0x31, 0x39, 0x38, 0x34, 0x37 };
 
 		/*
 			Rewards key
@@ -77,7 +78,7 @@ namespace GDCrypto
 
 			Rewards check (chk): 5 random chars + Random number
 		*/
-		static std::string const REWARDS_KEY("59182");
+		static std::vector<uint8_t> const REWARDS_KEY = { 0x35, 0x39, 0x31, 0x38, 0x32 };
 
 		/*
 			Like key
@@ -86,7 +87,7 @@ namespace GDCrypto
 			Like check (chk): Special + ItemID + Like + Type + RS + AccountID +
 			UDID + UUID
 		*/
-		static std::string const LIKE_KEY("58281");
+		static std::vector<uint8_t> const LIKE_KEY = { 0x35, 0x38, 0x32, 0x38, 0x31 };
 
 		/*
 			Rate key
@@ -94,7 +95,7 @@ namespace GDCrypto
 
 			Rate check (chk): LevelID + Stars + RS + AccountID + UDID + UUID
 		*/
-		static std::string const RATE_KEY("58281");
+		static std::vector<uint8_t> const RATE_KEY = { 0x35, 0x38, 0x32, 0x38, 0x31 };
 
 		/*
 			Userscore key
@@ -104,14 +105,19 @@ namespace GDCrypto
 			Coins + IconType + Icon + Diamonds + AccIcon + AccShip + AccBall +
 			AccBird + AccDart + AccRobot + AccGlow + AccSpider + AccExplosion
 		*/
-		static std::string const USERSCORE_KEY("85271");
+		static std::vector<uint8_t> const USERSCORE_KEY = { 0x38, 0x35, 0x32, 0x37, 0x31 };
 
 		/*
-			CHK values: AccountID, LevelID, Percentage, Seconds, Jumps, Attempts, Seed, Bests Differences, UNKNOWN (always 1), UserCoins, DailyID, Seed7 ("s7" from packet)
+			Levelscore key
+			Used when generating checks for the level leaderboards
+
+			Userscore check (chk): AccountID + LevelID + Percentage + Seconds +
+			Jumps + Attempts + levelscoreSeed + Bests Differences + UNKNOWN (always 1)
+			+ UserCoins + DailyID + Seed7 ("s7" from packet)
 			Seconds = seconds taken to reach the best
 			Jumps = jumps taken to reach the best
 			Bests Differences = differences between bests, ex: 0% - 65% - 100% -> (65 - 0), (100 - 65) -> 65,35
-			Generate Seed using the function "GenerateLevelLeaderboardSeed()"
+			Generate "levelscoreSeed" using the utility function
 		*/
 		static std::vector<uint8_t> const LEVELSCORE_KEY = { 0x33, 0x39, 0x36, 0x37, 0x33 };
 	}
@@ -123,11 +129,47 @@ namespace GDCrypto
 			Used when generating level checks in requests
 		*/
 		static std::string const LEVEL_SALT("xI25fpAapCQg");
+
+		/*
+			Comment salt
+			Used when generating comment checks in requests
+		*/
 		static std::string const COMMENT_SALT("xPT6iUrtws0J");
+
+		/*
+			Challenges salt
+			Used when generating challenges checks in requests
+		*/
 		static std::string const CHALLENGES_SALT("");
+
+		/*
+			Rewards salt
+			Used when generating rewards checks in requests
+		*/
 		static std::string const REWARDS_SALT("");
-		static std::string const LIKERATE_SALT("ysg6pUrtjn0J");
+
+		/*
+			Like salt
+			Used when generating like checks in requests
+		*/
+		static std::string const LIKE_SALT("ysg6pUrtjn0J");
+
+		/*
+			Rate salt
+			Used when generating rate checks in requests
+		*/
+		static std::string const RATE_SALT("ysg6pUrtjn0J");
+
+		/*
+			Userscore salt
+			Used when generating userscore checks in requests
+		*/
 		static std::string const USERSCORE_SALT("xI35fsAapCRg");
+
+		/*
+			Levelscore salt
+			Used when generating level leaderboard checks in requests
+		*/
 		static std::string const LEVELSCORE_SALT("yPg6pUrtWn0J");
 	}
 
@@ -149,6 +191,29 @@ namespace GDCrypto
 		{
 			for (auto i = 0u; i < buffer.size(); ++i)
 				buffer[i] ^= key[i % key.size()];
+		}
+
+		inline std::string levelSeed(const std::string& s)
+		{
+			std::string ret;
+
+			if (s.size() < 49)
+				return s;
+
+			for (auto i = 0u; i < 50; ++i)
+				ret += s[(s.size() / 50) * i];
+
+			return ret;
+		}
+
+		inline long levelscoreSeed(
+			unsigned long Jumps,
+			unsigned long Percentage,
+			unsigned long Seconds)
+		{
+			return 1482 +
+				(Jumps + 3991) * (Percentage + 8354)
+				+ std::pow(Seconds + 4085, 2) - 50028039;
 		}
 	}
 
@@ -222,10 +287,9 @@ namespace GDCrypto
 	/*
 		DataCipher
 
-		This class is used to encode/decode data, like savegames
-		or level strings. The algorithm used is deflate + base64
-		(url safe) for encoding, base64 + inflate for decoding.
-		A XOR operation can be applied before of the algorithm.
+		This class is used to encode/decode data, like savegames or level strings.
+		The algorithm used is deflate + base64 (url safe) for encoding, base64 +
+		inflate for decoding. A XOR operation can be applied before of the algorithm.
 	*/
 	class DataCipher
 	{

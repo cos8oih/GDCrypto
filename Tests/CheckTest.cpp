@@ -23,8 +23,8 @@ unsigned int randomNumber()
 
 int main()
 {
-	CheckGenerator gen(REWARDS_KEY, REWARDS_SALT);
-	RobTopDecoder decoder(REWARDS_KEY);
+	CheckGenerator gen(Keys::REWARDS_KEY, Salts::REWARDS_SALT);
+	RobTopDecoder decoder(Keys::REWARDS_KEY);
 
 	auto randString = randomString();
 	auto randNum = randomNumber();
@@ -34,7 +34,7 @@ int main()
 
 	std::cout << "String: " << randString << '\n';
 	std::cout << "Number: " << randNum << '\n';
-	std::cout << "Raw data: " << randString << randNum << REWARDS_SALT << '\n';
+	std::cout << "Raw data: " << randString << randNum << Salts::REWARDS_SALT << '\n';
 	std::cout << "SHA1: " << decoder.digestAsString() << '\n';
 	std::cout << "Final check: " << gen.digestAsString() << std::endl;
 
