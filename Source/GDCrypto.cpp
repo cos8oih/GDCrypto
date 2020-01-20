@@ -143,7 +143,10 @@ void deflateBuffer(std::vector<uint8_t>& buf)
 			stream.avail_out = CHUNK_SIZE;
 			stream.next_out = buffer;
 
-			state = deflate(&stream, Z_FINISH);
+			if (dataLeft)
+				state = deflate(&stream, Z_NO_FLUSH);
+			else
+				state = deflate(&stream, Z_FINISH);
 
 			if (state != Z_OK &&
 				state != Z_STREAM_END)
