@@ -13,7 +13,7 @@ static std::vector<uint8_t> const NEW_LEVEL_HEADER =
 	0x48, 0x34, 0x73, 0x49, 0x41, 
 	0x41, 0x41, 0x41, 0x41, 0x41
 };
-static auto const CHUNK_SIZE = 16384;
+static auto const CHUNK_SIZE = 32768;
 
 //Helpers
 
@@ -21,7 +21,6 @@ inline void appendBuffer(
 	std::vector<uint8_t>& dst,
 	std::vector<uint8_t> const& src)
 {
-	dst.reserve(dst.size() + src.size());
 	dst.insert(dst.end(), src.begin(), src.end());
 }
 
@@ -57,6 +56,22 @@ uint8_t* bufferToData(std::vector<uint8_t> const& src)
 
 	return p;
 }
+
+// Used for testing, delet me
+#include <chrono>
+class Benchmark
+{
+public:
+	std::chrono::time_point<std::chrono::steady_clock> start, end;
+	Benchmark() { start = std::chrono::steady_clock::now(); }
+	~Benchmark()
+	{
+		end = std::chrono::steady_clock::now();
+		auto diff = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+		std::cout << "Code ran in " << diff.count() << "ms" << std::endl;
+	}
+};
+//
 
 void inflateBuffer(std::vector<uint8_t>& buf, bool newLevelData)
 {
@@ -316,6 +331,7 @@ DataCipher& DataCipher::digest(std::vector<uint8_t>& buffer)
 	if (m_eType == ENCODE)
 	{
 		deflateBuffer(buffer);
+
 		buffer = Base64::encode(buffer);
 
 		if (!m_vKey.empty())

@@ -1,6 +1,5 @@
 //C++ application which encode/decode savegames
 #include "Include/GDCrypto.hpp"
-#include <chrono>
 #include <fstream>
 
 using namespace GDCrypto;
@@ -8,28 +7,14 @@ using namespace GDCrypto;
 static std::string const optionEncode("--encode");
 static std::string const optionDecode("--decode");
 
-class Benchmark
-{
-public:
-	std::chrono::time_point<std::chrono::steady_clock> start, end;
-	Benchmark() { start = std::chrono::steady_clock::now(); }
-	~Benchmark()
-	{
-		end = std::chrono::steady_clock::now();
-		auto diff = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-		std::cout << "Code ran in " << diff.count() << "ms" << std::endl;
-	}
-};
-
 void encode(std::string const& path)
 {
-	SavegameEncoder encoder;
+	LevelEncoder encoder;
 	std::ifstream in(path);
 	std::ofstream out(path + ".dat");
 
 	if (in.is_open() && out.is_open())
 	{
-		Benchmark b;
 		encoder << in >> out;
 		std::cout << "Encoded file written to: \""
 			<< path + ".dat\"" << std::endl;
@@ -44,13 +29,12 @@ void encode(std::string const& path)
 
 void decode(std::string const& path)
 {
-	SavegameDecoder decoder;
+	LevelDecoder decoder;
 	std::ifstream in(path);
 	std::ofstream out(path + ".out");
 
 	if (in.is_open() && out.is_open())
 	{
-		Benchmark b;
 		decoder << in >> out;
 		std::cout << "Decoded file written to: \""
 			<< path + ".out\"" << std::endl;
