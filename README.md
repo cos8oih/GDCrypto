@@ -1,3 +1,4 @@
+![License badge](https://img.shields.io/github/license/Cos8o/GDCrypto)
 # GDCrypto
 C++ library that implements common Geometry Dash algorithms.
 ## Todo
