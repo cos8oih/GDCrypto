@@ -1,5 +1,5 @@
 //This library is horrible, go fix it u maincra
-#include "External/base64.hpp"
+#include "External/Base64.hpp"
 #include <string>
 
 static std::string const dict("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_");
