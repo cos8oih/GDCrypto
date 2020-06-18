@@ -7,10 +7,10 @@ using namespace gdcrypto::zlib;
 
 //Constants
 
-static auto const CHUNK_SIZE = 32768u;
+static auto constexpr CHUNK_SIZE = 32768u;
 
-static auto const Z_GZIP_HEADER = 0x10;
-static auto const Z_AUTO_HEADER = 0x20;
+static auto constexpr Z_GZIP_HEADER = 0x10;
+static auto constexpr Z_AUTO_HEADER = 0x20;
 
 //DeflateStream
 

@@ -26,55 +26,58 @@
 
 #include <string>
 
-namespace gdcrypto::salts
+namespace gdcrypto
 {
-	/*
-		Level salt
-		Used when generating level checks in requests
-	*/
-	static std::string const LEVEL_SALT("xI25fpAapCQg");
+	namespace salts
+	{
+		/*
+			Level salt
+			Used when generating level checks in requests
+		*/
+		static std::string const LEVEL_SALT("xI25fpAapCQg");
 
-	/*
-		Comment salt
-		Used when generating comment checks in requests
-	*/
-	static std::string const COMMENT_SALT("xPT6iUrtws0J");
+		/*
+			Comment salt
+			Used when generating comment checks in requests
+		*/
+		static std::string const COMMENT_SALT("xPT6iUrtws0J");
 
-	/*
-		Challenges salt
-		Used when generating challenges checks in requests
-	*/
-	static std::string const CHALLENGES_SALT("");
+		/*
+			Challenges salt
+			Used when generating challenges checks in requests
+		*/
+		static std::string const CHALLENGES_SALT("");
 
-	/*
-		Rewards salt
-		Used when generating rewards checks in requests
-	*/
-	static std::string const REWARDS_SALT("");
+		/*
+			Rewards salt
+			Used when generating rewards checks in requests
+		*/
+		static std::string const REWARDS_SALT("");
 
-	/*
-		Like salt
-		Used when generating like checks in requests
-	*/
-	static std::string const LIKE_SALT("ysg6pUrtjn0J");
+		/*
+			Like salt
+			Used when generating like checks in requests
+		*/
+		static std::string const LIKE_SALT("ysg6pUrtjn0J");
 
-	/*
-		Rate salt
-		Used when generating rate checks in requests
-	*/
-	static std::string const RATE_SALT("ysg6pUrtjn0J");
+		/*
+			Rate salt
+			Used when generating rate checks in requests
+		*/
+		static std::string const RATE_SALT("ysg6pUrtjn0J");
 
-	/*
-		Userscore salt
-		Used when generating userscore checks in requests
-	*/
-	static std::string const USERSCORE_SALT("xI35fsAapCRg");
+		/*
+			Userscore salt
+			Used when generating userscore checks in requests
+		*/
+		static std::string const USERSCORE_SALT("xI35fsAapCRg");
 
-	/*
-		Levelscore salt
-		Used when generating level leaderboard checks in requests
-	*/
-	static std::string const LEVELSCORE_SALT("yPg6pUrtWn0J");
+		/*
+			Levelscore salt
+			Used when generating level leaderboard checks in requests
+		*/
+		static std::string const LEVELSCORE_SALT("yPg6pUrtWn0J");
+	}
 }
 
 #endif /* _GDCRYPTO_SALTS_HPP */

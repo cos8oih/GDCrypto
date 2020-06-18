@@ -54,7 +54,7 @@ namespace gdcrypto
 			: m_AES(aes),
 			m_Key(key) {}
 		DataCipher(
-			std::vector<uint8_t> const& key = {})
+			std::vector<uint8_t> const& key)
 			: m_AES(false),
 			m_Key(key) {}
 
@@ -86,6 +86,7 @@ namespace gdcrypto
 	class GDCRYPTO_API IOSSavegameCipher
 		: public DataCipher
 	{
+	public:
 		IOSSavegameCipher()
 			: DataCipher(true, keys::NULL_KEY) {}
 	};

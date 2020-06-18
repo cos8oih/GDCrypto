@@ -5,34 +5,48 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 project(GDCrypto)
 
+#Options
+option(GDCRYPTO_STATIC "Compile GDCrypto as a static library" OFF)
+option(GDCRYPTO_EXAMPLES "Includes examples from compilation" OFF)
+
 # Include directories
 INCLUDE_DIRECTORIES(.)
 
 #Source files
 set (GDCRYPTO_SRC
-    ../Source/Base64.cpp
-    ../Source/Sha1.cpp
-    ../Source/GDCrypto.cpp
+    ../Source/AES.c
+    ../Source/ZlibHelper.cpp
+    ../Source/SHA1.cpp
+    ../Source/CAPI.cpp
+    ../Source/RobTopCipher.cpp
+    ../Source/DataCipher.cpp
+    ../Source/CheckGenerator.cpp
+    ../Source/Utility.cpp
 )
 
 #Define libraries
-ADD_LIBRARY(gdcrypto SHARED ${GDCRYPTO_SRC})
-ADD_LIBRARY(gdcrypto-static STATIC ${GDCRYPTO_SRC})
-
-#Link libraries
-if (DEFINED ZLIB_PATH)
-    TARGET_LINK_LIBRARIES(gdcrypto ${ZLIB_PATH})
-    TARGET_LINK_LIBRARIES(gdcrypto-static ${ZLIB_PATH})
+if (GDCRYPTO_STATIC)
+    ADD_LIBRARY(GDCrypto STATIC ${GDCRYPTO_SRC})
 else()
-    MESSAGE(FATAL_ERROR "Zlib path not set!!!")
+    ADD_LIBRARY(GDCrypto SHARED ${GDCRYPTO_SRC})
 endif()
 
-#Define tests
-ADD_EXECUTABLE(ciphertest "./Tests/CipherTest.cpp")
-TARGET_LINK_LIBRARIES(ciphertest gdcrypto-static)
+#Link zlib
+if (DEFINED ZLIB_PATH)
+    TARGET_LINK_LIBRARIES(GDCrypto ${ZLIB_PATH})
+else()
+    MESSAGE(FATAL_ERROR "Zlib path not set.")
+endif()
 
-ADD_EXECUTABLE(datatest "./Tests/DataTest.cpp")
-TARGET_LINK_LIBRARIES(datatest gdcrypto-static)
+#Define examples
+if (GDCRYPTO_EXAMPLES)
+    ADD_EXECUTABLE(GJPTool "../Examples/CipherExample.cpp")
+    TARGET_LINK_LIBRARIES(GJPTool GDCrypto)
 
-ADD_EXECUTABLE(checktest "./Tests/CheckTest.cpp")
-TARGET_LINK_LIBRARIES(checktest gdcrypto-static)
+    ADD_EXECUTABLE(SavegameTool "../Examples/DataExample.cpp")
+    TARGET_LINK_LIBRARIES(SavegameTool GDCrypto)
+
+    #ADD_EXECUTABLE(checktest "./Tests/CheckTest.cpp")
+    #TARGET_LINK_LIBRARIES(checktest gdcrypto-static)
+
+endif()

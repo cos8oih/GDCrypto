@@ -28,11 +28,12 @@ static std::vector<uint8_t> const IOS_KEY =
 
 inline void doPKCS7(std::vector<uint8_t>& buffer)
 {
-	uint8_t missing = AES_BLOCKLEN -
-		(buffer.size() % AES_BLOCKLEN);
+	uint8_t missing = (buffer.size() % AES_BLOCKLEN);
 
 	if (missing)
 	{
+		missing = AES_BLOCKLEN - missing;
+
 		for (auto i = 0u; i < missing; ++i)
 			buffer.push_back(missing);
 	}
@@ -52,7 +53,9 @@ inline void removePKCS7(std::vector<uint8_t>& buffer)
 				return;
 		}
 
-		buffer.erase(it - padEnd, buffer.end());
+		buffer.erase(
+			it - padEnd,
+			buffer.end());
 	}
 }
 

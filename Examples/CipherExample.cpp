@@ -4,8 +4,8 @@
 
 using namespace gdcrypto;
 
-static std::string const encodeOption("--encode");
-static std::string const decodeOption("--decode");
+static std::string const OPTION_ENCODE("--encode");
+static std::string const OPTION_DECODE("--decode");
 
 int encode(
 	RobTopCipher& cipher,
@@ -36,15 +36,17 @@ int decode(
 	return 0;
 }
 
-int main(int const argc, char const* const* argv)
+int main(
+	int const argc,
+	char const* const* argv)
 {
 	RobTopCipher gjpCipher(keys::GJP_KEY);
 
 	if (argc == 3)
 	{
-		if (argv[1] == encodeOption)
+		if (argv[1] == OPTION_ENCODE)
 			return encode(gjpCipher, argv[2]);
-		else if (argv[1] == decodeOption)
+		else if (argv[1] == OPTION_DECODE)
 			return decode(gjpCipher, argv[2]);
 	}
 

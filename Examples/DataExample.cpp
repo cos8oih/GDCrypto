@@ -1,10 +1,34 @@
-//Savefile decoding
+//Savefile encoding/decoding
 #include "Include/GDCrypto/DataCipher.hpp"
-#include "Include/GDCrypto/RobTopCipher.hpp"
-#include "Source/ZlibHelper.hpp"
+
 #include <fstream>
 
 using namespace gdcrypto;
+
+static std::string_view constexpr OPTION_ENCODE("--encode");
+static std::string_view constexpr OPTION_DECODE("--decode");
+
+static std::string_view constexpr OPTION_IOS("--ios");
+
+std::vector<uint8_t> readFromFile(std::string const& path)
+{
+	std::vector<uint8_t> buffer;
+	std::ifstream file(path, std::ios::ate, std::ios::binary);
+
+	if (file.is_open())
+	{
+		auto size = file.tellg();
+		file.seekg(0, std::ios::beg);
+
+		buffer.resize(size);
+
+		file.read(
+			reinterpret_cast<char*>(buffer.data()),
+			size);
+	}
+
+	return buffer;
+}
 
 bool writeToFile(
 	std::string const& path,
@@ -25,34 +49,82 @@ bool writeToFile(
 	return false;
 }
 
-int main()
+bool writeToFile(
+	std::string const& path,
+	std::string_view const s)
 {
-	/*
-	Base64Cipher b64;
-	LevelDataCipher lvl;
+	return writeToFile(
+		path,
+		std::vector<uint8_t>(s.begin(), s.end()));
+}
 
-	std::ifstream data("C:\\Users\\Nicolas\\Desktop\\gd saves\\broken.dat", std::ios::binary);
+int encode(std::string const& path)
+{
+	SavegameCipher cipher;
 
-	if (data.is_open())
-	{
-		auto buffer = b64.decode(data);
-		writeToFile("C:\\Users\\Nicolas\\Desktop\\gd saves\\broken.gzip", buffer);
-
-		buffer = lvl.decode(data);
-		writeToFile("C:\\Users\\Nicolas\\Desktop\\gd saves\\broken.xml", buffer);
-	}
+	auto buffer = readFromFile(path);
+	auto s = cipher.encode(buffer);
+	writeToFile(path + ".encoded", s);
 
 	return 0;
-	*/
+}
 
-	std::ifstream data("C:\\Users\\Nicolas\\Desktop\\gd saves\\mac_saves\\macsave1.dat", std::ios::binary);
+int decode(std::string const& path)
+{
+	SavegameCipher cipher;
 
-	if (data.is_open())
+	auto buffer = readFromFile(path);
+	buffer = cipher.decode(buffer);
+	writeToFile(path + ".decoded", buffer);
+
+	return 0;
+}
+
+int encodeIOS(std::string const& path)
+{
+	IOSSavegameCipher cipher;
+
+	auto buffer = readFromFile(path);
+	auto s = cipher.encode(buffer);
+	writeToFile(path + ".encoded", s);
+
+	return 0;
+}
+
+int decodeIOS(std::string const& path)
+{
+	IOSSavegameCipher cipher;
+
+	auto buffer = readFromFile(path);
+	buffer = cipher.decode(buffer);
+	writeToFile(path + ".decoded", buffer);
+
+	return 0;
+}
+
+int main(int argc, char** argv)
+{
+	if (argc == 3)
 	{
-		std::vector<uint8_t> buffer(std::istreambuf_iterator(data), {});
-		auto decoded = zlib::inflateBuffer(buffer);
-		std::cout << "All g\n";
+		if (argv[1] == OPTION_ENCODE)
+			return encode(argv[2]);
+		else if (argv[1] == OPTION_DECODE)
+			return decode(argv[2]);
 	}
+	else if (argc == 4 &&
+	argv[2] == OPTION_IOS)
+	{
+		if (argv[1] == OPTION_ENCODE)
+			return encodeIOS(argv[3]);
+		else if (argv[1] == OPTION_DECODE)
+			return decodeIOS(argv[3]);
+	}
+
+	std::cout
+		<< "\nUsage: "
+		<< argv[0]
+		<< " [--encode|--decode] [--ios] [savefile path]"
+		<< std::endl;
 
 	return 0;
 }
