@@ -2,7 +2,6 @@
 
 #include "GDCrypto/CheckGenerator.hpp"
 #include "GDCrypto/RobTopCipher.hpp"
-#include "GDCrypto/Salts.hpp"
 
 using namespace gdcrypto;
 
@@ -39,7 +38,7 @@ void CheckGenerator::digest(std::vector<uint8_t>& buffer)
 	buffer.clear();
 
 	//Special case
-	if (m_Key == keys::LEVELSCORE_KEY &&
+	if (m_Key == gdcrypto::vecFromArray(keys::LEVELSCORE_KEY) &&
 		m_Salt == salts::LEVELSCORE_SALT)
 	{
 		m_Buffer.insert(
@@ -65,7 +64,7 @@ void CheckGenerator::digest(std::vector<uint8_t>& buffer)
 			m_Salt.end());
 	}
 
-	sha.update(std::string(m_Buffer.begin(), m_Buffer.end()));
+	sha.update(gdcrypto::toString(m_Buffer));
 	
 	auto s = cipher.encode(sha.final());
 	buffer.insert(buffer.begin(), s.begin(), s.end());
@@ -80,7 +79,7 @@ void CheckGenerator::digest(std::string& s)
 
 	digest(buf);
 
-	s = std::string(buf.begin(), buf.end());
+	s = gdcrypto::toString(buf);
 }
 
 void CheckGenerator::digest(std::ostream& out)

@@ -24,8 +24,7 @@
 #ifndef _GDCRYPTO_ROBTOPCIPHER_HPP
 #define _GDCRYPTO_ROBTOPCIPHER_HPP
 
-#include "GDCrypto/Export.hpp"
-#include "GDCrypto/Keys.hpp"
+#include "GDCrypto/Utility.hpp"
 
 #include <vector>
 #include <string>
@@ -39,32 +38,32 @@ namespace gdcrypto
 		The RobTop Cipher is a cipher widely used in Geometry Dash. It's the combination
 		of the base64 (url safe) algorithm and the bitwise XOR operation, where every
 		char of the result string is XORed with a character of the key (array of chars).
-		Note: if you dont set a key / set the key to { '\0' }, the cipher will effectively
+		Note: if you dont set a key/set the key to { '\0' }, the cipher will effectively
 		act as a Base64 encoder/decoder (see Base64Cipher below).
 	*/
 	class GDCRYPTO_API RobTopCipher
 	{
 	protected:
-		std::vector<uint8_t> m_Key;
+		std::vector<std::uint8_t> m_Key;
 	public:
-		RobTopCipher(std::vector<uint8_t> const& key = keys::NULL_KEY)
+		RobTopCipher(std::vector<std::uint8_t> const& key)
 			: m_Key(key) {}
 
-		std::string encode(std::vector<uint8_t> const& buffer) const;
+		std::string encode(std::vector<std::uint8_t> const& buffer) const;
 		std::string encode(std::string const& s) const;
 		std::string encode(std::istream& in) const;
 
-		std::vector<uint8_t> decode(std::vector<uint8_t> const& buffer) const;
-		std::vector<uint8_t> decode(std::string const& s) const;
-		std::vector<uint8_t> decode(std::istream& in) const;
+		std::vector<std::uint8_t> decode(std::vector<std::uint8_t> const& buffer) const;
+		std::vector<std::uint8_t> decode(std::string const& s) const;
+		std::vector<std::uint8_t> decode(std::istream& in) const;
 	};
 
-	class GDCRYPTO_API Base64Cipher
+	class Base64Cipher
 		: public RobTopCipher
 	{
 	public:
 		Base64Cipher()
-			: RobTopCipher() {}
+			: RobTopCipher(gdcrypto::vecFromArray(keys::NULL_KEY)) {}
 	};
 }
 

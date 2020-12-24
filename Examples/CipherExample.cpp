@@ -1,6 +1,5 @@
 //GJP encoder/decoder
 #include "Include/GDCrypto/RobTopCipher.hpp"
-#include "Include/GDCrypto/Keys.hpp"
 
 using namespace gdcrypto;
 
@@ -40,7 +39,7 @@ int main(
 	int const argc,
 	char const* const* argv)
 {
-	RobTopCipher gjpCipher(keys::GJP_KEY);
+	RobTopCipher gjpCipher(gdcrypto::vecFromArray(keys::GJP_KEY));
 
 	if (argc == 3)
 	{

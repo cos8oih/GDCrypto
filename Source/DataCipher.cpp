@@ -7,14 +7,13 @@
 #include "AES.hpp"
 #include "ZlibHelper.hpp"
 
-#include "GDCrypto/Utility.hpp"
 #include "GDCrypto/DataCipher.hpp"
 
 using namespace gdcrypto;
 
-//Constants
+//Globals
 
-static std::vector<uint8_t> const IOS_KEY =
+static std::array<std::uint8_t, 32u> const IOS_KEY =
 {
 	0x69, 0x70, 0x75, 0x39, 0x54, 0x55, 0x76, 0x35,
 	0x34, 0x79, 0x76, 0x5D, 0x69, 0x73, 0x46, 0x4D,
@@ -24,9 +23,9 @@ static std::vector<uint8_t> const IOS_KEY =
 
 //Helpers
 
-inline void doPKCS7(std::vector<uint8_t>& buffer)
+inline void doPKCS7(std::vector<std::uint8_t>& buffer)
 {
-	uint8_t missing = (buffer.size() % AES_BLOCKLEN);
+	std::uint8_t missing = (buffer.size() % AES_BLOCKLEN);
 
 	if (missing)
 	{
@@ -37,7 +36,7 @@ inline void doPKCS7(std::vector<uint8_t>& buffer)
 	}
 }
 
-inline void removePKCS7(std::vector<uint8_t>& buffer)
+inline void removePKCS7(std::vector<std::uint8_t>& buffer)
 {
 	auto padEnd = buffer.back();
 
@@ -57,15 +56,15 @@ inline void removePKCS7(std::vector<uint8_t>& buffer)
 	}
 }
 
-std::vector<uint8_t> ecbEncryptWithKey(
-	std::vector<uint8_t> const& buffer,
-	std::vector<uint8_t> const& key)
+std::vector<std::uint8_t> ecbEncryptWithKey(
+	std::vector<std::uint8_t> const& buffer,
+	std::vector<std::uint8_t> const& key)
 {
 	if (buffer.size() &&
 		key.size() == AES_KEYLEN)
 	{
 		AES_ctx ctx = {};
-		std::vector<uint8_t> out(buffer);
+		std::vector<std::uint8_t> out(buffer);
 
 		AES_init_ctx(&ctx, key.data());
 
@@ -82,15 +81,15 @@ std::vector<uint8_t> ecbEncryptWithKey(
 	return {};
 }
 
-std::vector<uint8_t> ecbDecryptWithKey(
-	std::vector<uint8_t> const& buffer,
-	std::vector<uint8_t> const& key)
+std::vector<std::uint8_t> ecbDecryptWithKey(
+	std::vector<std::uint8_t> const& buffer,
+	std::vector<std::uint8_t> const& key)
 {
 	if (!(buffer.size() % AES_BLOCKLEN) &&
 		key.size() == AES_KEYLEN)
 	{
 		AES_ctx ctx = {};
-		std::vector<uint8_t> out(buffer);
+		std::vector<std::uint8_t> out(buffer);
 
 		AES_init_ctx(&ctx, key.data());
 
@@ -109,21 +108,17 @@ std::vector<uint8_t> ecbDecryptWithKey(
 
 //DataCipher
 
-std::string DataCipher::encode(std::vector<uint8_t> const& buffer) const
+std::string DataCipher::encode(std::vector<std::uint8_t> const& buffer) const
 {
 	std::string s;
 	base64::Base64 b64(base64::URL_SAFE_DICT);
 
-	if (m_AES)
-	{
-		auto buf = ecbEncryptWithKey(buffer, IOS_KEY);
-		s = std::string(buf.begin(), buf.end());
-	}
-	else
-	{
-		auto buf = zlib::deflateBuffer(buffer);
-		s = b64.encode(buf);
-	}
+	s = m_AES
+		? gdcrypto::toString(
+			ecbEncryptWithKey(
+				buffer,
+				gdcrypto::vecFromArray(IOS_KEY)))
+		: b64.encode(zlib::deflateBuffer(buffer));
 
 	xorWithKey(s, m_Key);
 
@@ -132,15 +127,15 @@ std::string DataCipher::encode(std::vector<uint8_t> const& buffer) const
 
 std::string DataCipher::encode(std::string const& s) const
 {
-	return encode(std::vector<uint8_t>(s.begin(), s.end()));
+	return encode(std::vector<std::uint8_t>(s.begin(), s.end()));
 }
 
 std::string DataCipher::encode(std::istream& in) const
 {
-	return encode(std::vector<uint8_t>(std::istreambuf_iterator(in), {}));
+	return encode(std::vector<std::uint8_t>(std::istreambuf_iterator(in), {}));
 }
 
-std::vector<uint8_t> DataCipher::decode(std::vector<uint8_t> const& buffer) const
+std::vector<std::uint8_t> DataCipher::decode(std::vector<std::uint8_t> const& buffer) const
 {
 	base64::Base64 b64(base64::URL_SAFE_DICT);
 
@@ -149,20 +144,24 @@ std::vector<uint8_t> DataCipher::decode(std::vector<uint8_t> const& buffer) cons
 	xorWithKey(buf, m_Key);
 
 	if (m_AES)
-		return ecbDecryptWithKey(buf, IOS_KEY);
+	{
+		return ecbDecryptWithKey(
+			buf,
+			gdcrypto::vecFromArray(IOS_KEY));
+	}
 
 	buf = b64.decode(buf);
 	return zlib::inflateBuffer(buf);
 }
 
-std::vector<uint8_t> DataCipher::decode(std::string const& s) const
+std::vector<std::uint8_t> DataCipher::decode(std::string const& s) const
 {
-	return decode(std::vector<uint8_t>(s.begin(), s.end()));
+	return decode(std::vector<std::uint8_t>(s.begin(), s.end()));
 }
 
-std::vector<uint8_t> DataCipher::decode(std::istream& in) const
+std::vector<std::uint8_t> DataCipher::decode(std::istream& in) const
 {
-	return decode(std::vector<uint8_t>(std::istreambuf_iterator(in), {}));
+	return decode(std::vector<std::uint8_t>(std::istreambuf_iterator(in), {}));
 }
 
 //C Bindings
@@ -173,7 +172,7 @@ extern "C"
 {
 	GDCRYPTO_API void* DataCipher_create(
 		int const aes,
-		uint8_t const* key,
+		std::uint8_t const* key,
 		size_t const keySize)
 	{
 		if (key && keySize)
@@ -181,7 +180,7 @@ extern "C"
 			return reinterpret_cast<void*>(
 				new DataCipher(
 					aes,
-					std::vector<uint8_t>(key, key + keySize)));
+					std::vector<std::uint8_t>(key, key + keySize)));
 		}
 
 		return nullptr;
@@ -198,15 +197,15 @@ extern "C"
 		return GDCRYPTO_FAIL;
 	}
 
-	GDCRYPTO_API uint8_t* DataCipher_encode(
+	GDCRYPTO_API std::uint8_t* DataCipher_encode(
 		void* cipher,
-		uint8_t const* data,
+		std::uint8_t const* data,
 		size_t const dataSize,
 		size_t* dataOut)
 	{
 		if (cipher && data && dataSize)
 		{
-			std::vector<uint8_t> buffer(data, data + dataSize);
+			std::vector<std::uint8_t> buffer(data, data + dataSize);
 			auto s = getCipher(cipher)->encode(buffer);
 
 			if (s.size())
@@ -221,15 +220,15 @@ extern "C"
 		return nullptr;
 	}
 
-	GDCRYPTO_API uint8_t* DataCipher_decode(
+	GDCRYPTO_API std::uint8_t* DataCipher_decode(
 		void* cipher,
-		uint8_t const* data,
+		std::uint8_t const* data,
 		size_t const dataSize,
 		size_t* dataOut)
 	{
 		if (cipher && data && dataSize)
 		{
-			std::vector<uint8_t> buffer(data, data + dataSize);
+			std::vector<std::uint8_t> buffer(data, data + dataSize);
 			auto buf = getCipher(cipher)->decode(buffer);
 
 			if (buf.size())

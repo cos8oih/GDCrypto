@@ -2,7 +2,6 @@
 
 #include "CAPI.hpp"
 
-#include "GDCrypto/Utility.hpp"
 #include "GDCrypto/RobTopCipher.hpp"
 
 using namespace gdcrypto;

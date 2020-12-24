@@ -24,8 +24,7 @@
 #ifndef _GDCRYPTO_CHECKGENERATOR_HPP
 #define _GDCRYPTO_CHECKGENERATOR_HPP
 
-#include "GDCrypto/Export.hpp"
-#include "GDCrypto/Keys.hpp"
+#include "GDCrypto/Utility.hpp"
 
 #include <vector>
 #include <string>
@@ -44,26 +43,26 @@ namespace gdcrypto
 	*/
 	class CheckGenerator
 	{
-		std::vector<uint8_t> m_Buffer;
-		std::vector<uint8_t> m_Key;
+		std::vector<std::uint8_t> m_Buffer;
+		std::vector<std::uint8_t> m_Key;
 		std::string m_Salt;
-		std::vector<uint8_t> m_Last;
+		std::vector<std::uint8_t> m_Last;
 	public:
 		CheckGenerator(
-			std::vector<uint8_t> const& key = keys::NULL_KEY,
-			std::string const& salt = "")
+			std::vector<std::uint8_t> const& key,
+			std::string const& salt)
 			: m_Key(key),
 			m_Salt(salt) {}
 
-		void insert(std::vector<uint8_t> const& buffer);
+		void insert(std::vector<std::uint8_t> const& buffer);
 		void insert(std::string const& s);
 		void insert(std::istream& in);
 
-		void digest(std::vector<uint8_t>& buffer);
+		void digest(std::vector<std::uint8_t>& buffer);
 		void digest(std::string& s);
 		void digest(std::ostream& out);
 
-		std::string generate(std::vector<std::vector<uint8_t>> const& buffers);
+		std::string generate(std::vector<std::vector<std::uint8_t>> const& buffers);
 		std::string generate(std::vector<std::string> const& buffers);
 
 		std::string digestAsString()
@@ -74,10 +73,10 @@ namespace gdcrypto
 		}
 	};
 
-	CheckGenerator& operator<<(CheckGenerator& g, std::vector<uint8_t> const& buffer);
+	CheckGenerator& operator<<(CheckGenerator& g, std::vector<std::uint8_t> const& buffer);
 	CheckGenerator& operator<<(CheckGenerator& g, std::string const& s);
 	CheckGenerator& operator<<(CheckGenerator& g, std::istream& in);
-	CheckGenerator& operator>>(CheckGenerator& g, std::vector<uint8_t>& buffer);
+	CheckGenerator& operator>>(CheckGenerator& g, std::vector<std::uint8_t>& buffer);
 	CheckGenerator& operator>>(CheckGenerator& g, std::string& s);
 	CheckGenerator& operator>>(CheckGenerator& g, std::ostream& in);
 }

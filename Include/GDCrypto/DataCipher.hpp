@@ -24,8 +24,7 @@
 #ifndef _GDCRYPTO_DATACIPHER_HPP
 #define _GDCRYPTO_DATACIPHER_HPP
 
-#include "GDCrypto/Export.hpp"
-#include "GDCrypto/Keys.hpp"
+#include "GDCrypto/Utility.hpp"
 
 #include <vector>
 #include <string>
@@ -46,49 +45,49 @@ namespace gdcrypto
 	{
 	protected:
 		bool m_AES;
-		std::vector<uint8_t> m_Key;
+		std::vector<std::uint8_t> m_Key;
 	public:
 		DataCipher(
 			bool aes = false,
-			std::vector<uint8_t> const& key = {})
+			std::vector<std::uint8_t> const& key = {})
 			: m_AES(aes),
 			m_Key(key) {}
 		DataCipher(
-			std::vector<uint8_t> const& key)
+			std::vector<std::uint8_t> const& key)
 			: m_AES(false),
 			m_Key(key) {}
 
-		std::string encode(std::vector<uint8_t> const& buffer) const;
+		std::string encode(std::vector<std::uint8_t> const& buffer) const;
 		std::string encode(std::string const& s) const;
 		std::string encode(std::istream& in) const;
 
-		std::vector<uint8_t> decode(std::vector<uint8_t> const& buffer) const;
-		std::vector<uint8_t> decode(std::string const& s) const;
-		std::vector<uint8_t> decode(std::istream& in) const;
+		std::vector<std::uint8_t> decode(std::vector<std::uint8_t> const& buffer) const;
+		std::vector<std::uint8_t> decode(std::string const& s) const;
+		std::vector<std::uint8_t> decode(std::istream& in) const;
 	};
 
-	class GDCRYPTO_API LevelDataCipher
+	class LevelDataCipher
 		: public DataCipher
 	{
 	public:
 		LevelDataCipher()
-			: DataCipher(false, keys::NULL_KEY) {}
+			: DataCipher(false, gdcrypto::vecFromArray(keys::NULL_KEY)) {}
 	};
 
-	class GDCRYPTO_API SavegameCipher
+	class SavegameCipher
 		: public DataCipher
 	{
 	public:
 		SavegameCipher()
-			: DataCipher(false, keys::SAVEGAME_KEY) {}
+			: DataCipher(false, gdcrypto::vecFromArray(keys::SAVEGAME_KEY)) {}
 	};
 
-	class GDCRYPTO_API IOSSavegameCipher
+	class IOSSavegameCipher
 		: public DataCipher
 	{
 	public:
 		IOSSavegameCipher()
-			: DataCipher(true, keys::NULL_KEY) {}
+			: DataCipher(true, gdcrypto::vecFromArray(keys::NULL_KEY)) {}
 	};
 }
 

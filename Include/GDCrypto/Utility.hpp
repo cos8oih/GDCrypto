@@ -25,16 +25,34 @@
 #define _GDCRYPTO_UTILITY_HPP
 
 #include "GDCrypto/Export.hpp"
+#include "GDCrypto/Keys.hpp"
+#include "GDCrypto/Salts.hpp"
 
 #include <cmath>
+#include <array>
 #include <vector>
 #include <string>
 
 namespace gdcrypto
 {
-	GDCRYPTO_API inline void xorWithKey(
-		std::vector<uint8_t>& buffer,
-		std::vector<uint8_t> const& key)
+	template <typename T, std::size_t const N>
+	inline std::vector<T> vecFromArray(std::array<T, N> const& arr)
+	{
+		return std::vector<T>(
+			arr.begin(),
+			arr.end());
+	}
+
+	inline std::string toString(std::vector<std::uint8_t> const& buffer)
+	{
+		return std::string(
+			buffer.begin(),
+			buffer.end());
+	}
+
+	inline void xorWithKey(
+		std::vector<std::uint8_t>& buffer,
+		std::vector<std::uint8_t> const& key)
 	{
 		if (buffer.size() && key.size())
 		{
@@ -60,9 +78,9 @@ namespace gdcrypto
 		}
 	}
 
-	GDCRYPTO_API inline void xorWithKey(
+	inline void xorWithKey(
 		std::string& s,
-		std::vector<uint8_t> const& key)
+		std::vector<std::uint8_t> const& key)
 	{
 		if (s.size() && key.size())
 		{
@@ -88,8 +106,7 @@ namespace gdcrypto
 		}
 	}
 
-	GDCRYPTO_API inline std::string levelSeed(
-		std::string const& levelString)
+	inline std::string levelSeed(std::string const& levelString)
 	{
 		std::string ret;
 
@@ -102,10 +119,10 @@ namespace gdcrypto
 		return ret;
 	}
 
-	GDCRYPTO_API inline int32_t levelscoreSeed(
-		uint32_t const jumps,
-		uint32_t const percentage,
-		uint32_t const seconds)
+	inline std::int32_t levelscoreSeed(
+		std::uint32_t const jumps,
+		std::uint32_t const percentage,
+		std::uint32_t const seconds)
 	{
 		return 1482 +
 			(jumps + 3991) * (percentage + 8354)
