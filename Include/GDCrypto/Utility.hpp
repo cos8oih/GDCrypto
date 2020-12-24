@@ -36,13 +36,27 @@ namespace gdcrypto
 		std::vector<uint8_t>& buffer,
 		std::vector<uint8_t> const& key)
 	{
-		//Xor with { '\0' } has no effect
-		if (buffer.size() && key.size() &&
-			!(buffer.size() == 1 &&
-				buffer.front() == '\0'))
+		if (buffer.size() && key.size())
 		{
-			for (auto i = 0u; i < buffer.size(); ++i)
-				buffer[i] ^= key[i % key.size()];
+			//Modulo optimization
+			if (key.size() == 1)
+			{
+				if (buffer.front() != '\0')
+				{
+					for (auto& b : buffer)
+						b ^= key[0];
+				}
+			}
+			else if (key.size() == 2)
+			{
+				for (auto i = 0u; i < buffer.size(); ++i)
+					buffer[i] ^= key[i & 1];
+			}
+			else
+			{
+				for (auto i = 0u; i < buffer.size(); ++i)
+					buffer[i] ^= key[i % key.size()];
+			}
 		}
 	}
 
@@ -50,13 +64,27 @@ namespace gdcrypto
 		std::string& s,
 		std::vector<uint8_t> const& key)
 	{
-		//Xor with { '\0' } has no effect
-		if (s.size() && key.size() &&
-			!(s.size() == 1 &&
-				s.front() == '\0'))
+		if (s.size() && key.size())
 		{
-			for (auto i = 0u; i < s.size(); ++i)
-				s[i] ^= key[i % key.size()];
+			//Modulo optimization
+			if (key.size() == 1)
+			{
+				if (s.front() != '\0')
+				{
+					for (auto& c : s)
+						c ^= key[0];
+				}
+			}
+			else if (key.size() == 2)
+			{
+				for (auto i = 0u; i < s.size(); ++i)
+					s[i] ^= key[i & 1];
+			}
+			else
+			{
+				for (auto i = 0u; i < s.size(); ++i)
+					s[i] ^= key[i % key.size()];
+			}
 		}
 	}
 
