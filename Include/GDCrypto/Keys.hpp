@@ -24,7 +24,7 @@
 #ifndef _GDCRYPTO_KEYS_HPP
 #define _GDCRYPTO_KEYS_HPP
 
-#include <vector>
+#include <array>
 
 namespace gdcrypto
 {
@@ -34,25 +34,25 @@ namespace gdcrypto
 			Null key
 			Does not affect the data
 		*/
-		static std::vector<uint8_t> const NULL_KEY = { 0x00 };
+		static std::array<std::uint8_t, 1> const NULL_KEY = { 0x00 };
 
 		/*
 			Savegame key
 			Used to encode/decode savegames
 		*/
-		static std::vector<uint8_t> const SAVEGAME_KEY = { 0x0B };
+		static std::array<std::uint8_t, 1> const SAVEGAME_KEY = { 0x0B };
 
 		/*
 			GJP key
 			Used to encode/decode passwords
 		*/
-		static std::vector<uint8_t> const GJP_KEY = { 0x33, 0x37, 0x35, 0x32, 0x36 };
+		static std::array<std::uint8_t, 5> const GJP_KEY = { 0x33, 0x37, 0x35, 0x32, 0x36 };
 
 		/*
 			Message key
 			Used to encode/decode messages
 		*/
-		static std::vector<uint8_t> const MESSAGE_KEY = { 0x31, 0x34, 0x32, 0x35, 0x31 };
+		static std::array<std::uint8_t, 5> const MESSAGE_KEY = { 0x31, 0x34, 0x32, 0x35, 0x31 };
 
 		/*
 			Level key
@@ -62,7 +62,7 @@ namespace gdcrypto
 			Level uploading check (seed2): levelSeed
 			Generate "levelSeed" using the utility function
 		*/
-		static std::vector<uint8_t> const LEVEL_KEY = { 0x34, 0x31, 0x32, 0x37, 0x34 };
+		static std::array<std::uint8_t, 5> const LEVEL_KEY = { 0x34, 0x31, 0x32, 0x37, 0x34 };
 
 		/*
 			Comment key
@@ -71,7 +71,7 @@ namespace gdcrypto
 			Comment check (chk): Username + Comment + LevelID + Percentage +
 			Comment Type (0 = Level, 1 = User)
 		*/
-		static std::vector<uint8_t> const COMMENT_KEY = { 0x32, 0x39, 0x34, 0x38, 0x31 };
+		static std::array<std::uint8_t, 5> const COMMENT_KEY = { 0x32, 0x39, 0x34, 0x38, 0x31 };
 
 		/*
 			Challenges key
@@ -79,7 +79,7 @@ namespace gdcrypto
 
 			Challenges check (chk): 5 random chars + Random number
 		*/
-		static std::vector<uint8_t> const CHALLENGES_KEY = { 0x31, 0x39, 0x38, 0x34, 0x37 };
+		static std::array<std::uint8_t, 5> const CHALLENGES_KEY = { 0x31, 0x39, 0x38, 0x34, 0x37 };
 
 		/*
 			Rewards key
@@ -87,7 +87,7 @@ namespace gdcrypto
 
 			Rewards check (chk): 5 random chars + Random number
 		*/
-		static std::vector<uint8_t> const REWARDS_KEY = { 0x35, 0x39, 0x31, 0x38, 0x32 };
+		static std::array<std::uint8_t, 5> const REWARDS_KEY = { 0x35, 0x39, 0x31, 0x38, 0x32 };
 
 		/*
 			Like key
@@ -96,7 +96,7 @@ namespace gdcrypto
 			Like check (chk): Special + ItemID + Like + Type + RS + AccountID +
 			UDID + UUID
 		*/
-		static std::vector<uint8_t> const LIKE_KEY = { 0x35, 0x38, 0x32, 0x38, 0x31 };
+		static std::array<std::uint8_t, 5> const LIKE_KEY = { 0x35, 0x38, 0x32, 0x38, 0x31 };
 
 		/*
 			Rate key
@@ -104,7 +104,7 @@ namespace gdcrypto
 
 			Rate check (chk): LevelID + Stars + RS + AccountID + UDID + UUID
 		*/
-		static std::vector<uint8_t> const RATE_KEY = { 0x35, 0x38, 0x32, 0x38, 0x31 };
+		static std::array<std::uint8_t, 5> const RATE_KEY = { 0x35, 0x38, 0x32, 0x38, 0x31 };
 
 		/*
 			Userscore key
@@ -114,7 +114,7 @@ namespace gdcrypto
 			Coins + IconType + Icon + Diamonds + AccIcon + AccShip + AccBall +
 			AccBird + AccDart + AccRobot + AccGlow + AccSpider + AccExplosion
 		*/
-		static std::vector<uint8_t> const USERSCORE_KEY = { 0x38, 0x35, 0x32, 0x37, 0x31 };
+		static std::array<std::uint8_t, 5> const USERSCORE_KEY = { 0x38, 0x35, 0x32, 0x37, 0x31 };
 
 		/*
 			Levelscore key
@@ -128,7 +128,7 @@ namespace gdcrypto
 			Bests Differences = differences between bests, ex: 0% - 65% - 100% -> (65 - 0), (100 - 65) -> 65,35
 			Generate "levelscoreSeed" using the utility function
 		*/
-		static std::vector<uint8_t> const LEVELSCORE_KEY = { 0x33, 0x39, 0x36, 0x37, 0x33 };
+		static std::array<std::uint8_t, 5> const LEVELSCORE_KEY = { 0x33, 0x39, 0x36, 0x37, 0x33 };
 	}
 }
 
