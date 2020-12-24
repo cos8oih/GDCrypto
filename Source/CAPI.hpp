@@ -1,7 +1,7 @@
 #ifndef _GDCRYPTO_CAPI_HPP
 #define _GDCRYPTO_CAPI_HPP
 
-#include "Include/GDCrypto/Export.hpp"
+#include "GDCrypto/Export.hpp"
 
 #include <cstdint>
 #include <cstring>

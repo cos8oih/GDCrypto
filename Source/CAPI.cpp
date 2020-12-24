@@ -1,5 +1,3 @@
-#define GDCRYPTO_BUILD
-
 #include "CAPI.hpp"
 
 extern "C"

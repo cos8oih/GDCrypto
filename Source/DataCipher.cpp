@@ -1,16 +1,14 @@
 #define CBC 0
 #define CTR 0
 
-#define GDCRYPTO_BUILD
-
 #include "External/Base64.hpp"
 
 #include "CAPI.hpp"
 #include "AES.hpp"
 #include "ZlibHelper.hpp"
 
-#include "Include/GDCrypto/Utility.hpp"
-#include "Include/GDCrypto/DataCipher.hpp"
+#include "GDCrypto/Utility.hpp"
+#include "GDCrypto/DataCipher.hpp"
 
 using namespace gdcrypto;
 

@@ -1,17 +1,24 @@
 # GDCrypto
+
 C++ library that implements all Geometry Dash algorithms.
+
 ## Todo
+
 * Tests
 * Bindings
 * XML prettify utility?
+* 
 ## How-to
+
 Header files are fully documented; moreover, the [Examples](Examples) folder contains some examples.
+
 ## Building
-CMake and Zlib are required for compiling. Base commands:
+
+CMake is required for compiling.
 ```
 mkdir Build
 cd Build
-cmake {OPTIONS} .. -DZLIB_PATH="PATH/TO/ZLIB" {GENERATOR}
+cmake {OPTIONS} ..
 ```
 To build a static version:
 ```

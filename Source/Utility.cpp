@@ -1,8 +1,6 @@
-#define GDCRYPTO_BUILD
-
 #include "CAPI.hpp"
 
-#include "Include/GDCrypto/Utility.hpp"
+#include "GDCrypto/Utility.hpp"
 
 using namespace gdcrypto;
 

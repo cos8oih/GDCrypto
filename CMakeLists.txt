@@ -1,18 +1,28 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.10)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.18)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 project(GDCrypto)
 
-#Options
+# Options
+
 option(GDCRYPTO_STATIC "Compile GDCrypto as a static library" OFF)
 option(GDCRYPTO_EXAMPLES "Includes examples from compilation" OFF)
 
+# Zlib
+
+ADD_SUBDIRECTORY(External/zlib)
+
 # Include directories
-INCLUDE_DIRECTORIES(.)
+
+INCLUDE_DIRECTORIES(
+	.
+	Include
+)
 
 #Source files
+
 set (GDCRYPTO_SRC
     ../Source/AES.c
     ../Source/ZlibHelper.cpp
@@ -25,21 +35,24 @@ set (GDCRYPTO_SRC
 )
 
 #Define libraries
+
 if (GDCRYPTO_STATIC)
     ADD_LIBRARY(GDCrypto STATIC ${GDCRYPTO_SRC})
 else()
     ADD_LIBRARY(GDCrypto SHARED ${GDCRYPTO_SRC})
 endif()
 
-#Link zlib
-if (DEFINED ZLIB_PATH)
-    TARGET_LINK_LIBRARIES(GDCrypto ${ZLIB_PATH})
-else()
-    MESSAGE(FATAL_ERROR "Zlib path not set.")
-endif()
+ADD_COMPILE_DEFINITIONS("GDCRYPTO_BUILD")
+
+# Link to zlib
+
+ADD_DEPENDENCIES(GDCrypto zlibstatic)
+TARGET_LINK_LIBRARIES(GDCrypto zlibstatic)
 
 #Define examples
+
 if (GDCRYPTO_EXAMPLES)
+
     ADD_EXECUTABLE(GJPTool "../Examples/CipherExample.cpp")
     TARGET_LINK_LIBRARIES(GJPTool GDCrypto)
 

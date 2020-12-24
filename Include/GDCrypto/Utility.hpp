@@ -24,7 +24,7 @@
 #ifndef _GDCRYPTO_UTILITY_HPP
 #define _GDCRYPTO_UTILITY_HPP
 
-#include "Include/GDCrypto/Export.hpp"
+#include "GDCrypto/Export.hpp"
 
 #include <cmath>
 #include <vector>

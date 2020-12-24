@@ -1,10 +1,8 @@
-#define GDCRYPTO_BUILD
-
 #include "External/Sha1.hpp"
 
-#include "Include/GDCrypto/CheckGenerator.hpp"
-#include "Include/GDCrypto/RobTopCipher.hpp"
-#include "Include/GDCrypto/Salts.hpp"
+#include "GDCrypto/CheckGenerator.hpp"
+#include "GDCrypto/RobTopCipher.hpp"
+#include "GDCrypto/Salts.hpp"
 
 using namespace gdcrypto;
 

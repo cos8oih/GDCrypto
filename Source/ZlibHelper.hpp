@@ -1,7 +1,7 @@
 #ifndef _GDCRYPTO_ZLIBHELPER_HPP
 #define _GDCRYPTO_ZLIBHELPER_HPP
 
-#include "External/Zlib.hpp"
+#include "External/zlib/zlib.h"
 #include <vector>
 
 namespace gdcrypto::zlib

@@ -1,11 +1,9 @@
-#define GDCRYPTO_BUILD
-
 #include "External/Base64.hpp"
 
 #include "CAPI.hpp"
 
-#include "Include/GDCrypto/Utility.hpp"
-#include "Include/GDCrypto/RobTopCipher.hpp"
+#include "GDCrypto/Utility.hpp"
+#include "GDCrypto/RobTopCipher.hpp"
 
 using namespace gdcrypto;
 

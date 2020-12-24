@@ -24,8 +24,8 @@
 #ifndef _GDCRYPTO_ROBTOPCIPHER_HPP
 #define _GDCRYPTO_ROBTOPCIPHER_HPP
 
-#include "Include/GDCrypto/Export.hpp"
-#include "Include/GDCrypto/Keys.hpp"
+#include "GDCrypto/Export.hpp"
+#include "GDCrypto/Keys.hpp"
 
 #include <vector>
 #include <string>
