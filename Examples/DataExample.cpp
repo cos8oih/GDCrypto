@@ -1,5 +1,6 @@
 //Savefile encoding/decoding
-#include "Include/GDCrypto/DataCipher.hpp"
+#include "GDCrypto/DataCipher.hpp"
+#include "Benchmark.hpp"
 
 #include <fstream>
 
@@ -60,10 +61,17 @@ bool writeToFile(
 
 int encode(std::string const& path)
 {
+	Benchmark timer;
 	SavegameCipher cipher;
 
 	auto buffer = readFromFile(path);
+
+	timer.start();
 	auto s = cipher.encode(buffer);
+	auto d = timer.delta();
+
+	std::cout << "Encoding took " << d << "ms\n";
+
 	writeToFile(path + ".encoded", s);
 
 	return 0;
@@ -71,10 +79,17 @@ int encode(std::string const& path)
 
 int decode(std::string const& path)
 {
+	Benchmark timer;
 	SavegameCipher cipher;
 
 	auto buffer = readFromFile(path);
+
+	timer.start();
 	buffer = cipher.decode(buffer);
+	auto d = timer.delta();
+
+	std::cout << "Decoding took " << d << "ms\n";
+
 	writeToFile(path + ".decoded", buffer);
 
 	return 0;

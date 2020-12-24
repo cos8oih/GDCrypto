@@ -34,14 +34,14 @@ namespace gdcrypto::base64
 			}
 		}
 
-		bool hasPadding(std::string const& buffer) const
+		inline bool hasPadding(std::vector<uint8_t> const& buffer) const
 		{
 			return buffer.size() &&
 				(buffer.size() % 4 ||
 					buffer.back() == m_cPad);
 		}
 
-		size_t getDecodedSize(std::string const& buffer) const
+		inline size_t getDecodedSize(std::vector<uint8_t> const& buffer) const
 		{
 			return ((buffer.size() + 3) / 4 - hasPadding(buffer)) * 4;
 		}
@@ -106,7 +106,7 @@ namespace gdcrypto::base64
 			return out;
 		}
 
-		std::vector<uint8_t> decode(std::string const& buffer) const
+		std::vector<uint8_t> decode(std::vector<uint8_t> const& buffer) const
 		{
 			std::vector<uint8_t> out;
 
@@ -159,10 +159,10 @@ namespace gdcrypto::base64
 		template <typename It>
 		std::vector<uint8_t> decode(It const& begin, It const& end) const
 		{
-			return decode(std::string(begin, end));
+			return decode(std::vector<uint8_t>(begin, end));
 		}
 
-		std::vector<uint8_t> decode(std::vector<uint8_t> const& buffer) const
+		std::vector<uint8_t> decode(std::string const& buffer) const
 		{
 			return decode(buffer.begin(), buffer.end());
 		}
