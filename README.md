@@ -7,7 +7,6 @@ C++ library that implements all Geometry Dash algorithms.
 * Tests
 * Bindings
 * XML prettify utility?
-* 
 ## How-to
 
 Header files are fully documented; moreover, the [Examples](Examples) folder contains some examples.
