@@ -24,14 +24,14 @@ INCLUDE_DIRECTORIES(
 #Source files
 
 set (GDCRYPTO_SRC
-    ../Source/AES.c
-    ../Source/ZlibHelper.cpp
-    ../Source/SHA1.cpp
-    ../Source/CAPI.cpp
-    ../Source/RobTopCipher.cpp
-    ../Source/DataCipher.cpp
-    ../Source/CheckGenerator.cpp
-    ../Source/Utility.cpp
+    Source/AES.c
+    Source/ZlibHelper.cpp
+    Source/Sha1.cpp
+    Source/CAPI.cpp
+    Source/RobTopCipher.cpp
+    Source/DataCipher.cpp
+    Source/CheckGenerator.cpp
+    Source/Utility.cpp
 )
 
 #Define libraries

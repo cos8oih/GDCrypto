@@ -3,6 +3,7 @@
 
 #include "External/zlib/zlib.h"
 #include <vector>
+#include <cstdint>
 
 namespace gdcrypto::zlib
 {
