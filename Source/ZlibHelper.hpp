@@ -1,7 +1,7 @@
 #ifndef _GDCRYPTO_ZLIBHELPER_HPP
 #define _GDCRYPTO_ZLIBHELPER_HPP
 
-#include "External/zlib/zlib.h"
+#include <zlib.h>
 #include <vector>
 #include <cstdint>
 

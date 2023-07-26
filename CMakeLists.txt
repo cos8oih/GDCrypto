@@ -10,10 +10,6 @@ project(GDCrypto)
 option(GDCRYPTO_STATIC "Compile GDCrypto as a static library" OFF)
 option(GDCRYPTO_EXAMPLES "Includes examples from compilation" OFF)
 
-# Zlib
-
-ADD_SUBDIRECTORY(External/zlib)
-
 # Include directories
 
 INCLUDE_DIRECTORIES(
@@ -46,8 +42,7 @@ ADD_COMPILE_DEFINITIONS("GDCRYPTO_BUILD")
 
 # Link to zlib
 
-ADD_DEPENDENCIES(GDCrypto zlibstatic)
-TARGET_LINK_LIBRARIES(GDCrypto zlibstatic)
+TARGET_LINK_LIBRARIES(GDCrypto z)
 
 #Define examples
 
