@@ -145,6 +145,7 @@
 #  define voidp                 z_voidp
 #  define voidpc                z_voidpc
 #  define voidpf                z_voidpf
+#  define ssize_t               z_size_t
 
 /* all zlib structs in zlib.h and zconf.h */
 #  define gz_header_s           z_gz_header_s

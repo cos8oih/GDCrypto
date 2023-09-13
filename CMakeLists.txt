@@ -10,10 +10,6 @@ project(GDCrypto)
 option(GDCRYPTO_STATIC "Compile GDCrypto as a static library" OFF)
 option(GDCRYPTO_EXAMPLES "Includes examples from compilation" OFF)
 
-# Zlib
-
-ADD_SUBDIRECTORY(External/zlib)
-
 # Include directories
 
 INCLUDE_DIRECTORIES(
@@ -24,14 +20,14 @@ INCLUDE_DIRECTORIES(
 #Source files
 
 set (GDCRYPTO_SRC
-    ../Source/AES.c
-    ../Source/ZlibHelper.cpp
-    ../Source/SHA1.cpp
-    ../Source/CAPI.cpp
-    ../Source/RobTopCipher.cpp
-    ../Source/DataCipher.cpp
-    ../Source/CheckGenerator.cpp
-    ../Source/Utility.cpp
+    Source/AES.c
+    Source/ZlibHelper.cpp
+    Source/Sha1.cpp
+    Source/CAPI.cpp
+    Source/RobTopCipher.cpp
+    Source/DataCipher.cpp
+    Source/CheckGenerator.cpp
+    Source/Utility.cpp
 )
 
 #Define libraries
@@ -46,8 +42,7 @@ ADD_COMPILE_DEFINITIONS("GDCRYPTO_BUILD")
 
 # Link to zlib
 
-ADD_DEPENDENCIES(GDCrypto zlibstatic)
-TARGET_LINK_LIBRARIES(GDCrypto zlibstatic)
+TARGET_LINK_LIBRARIES(GDCrypto z)
 
 #Define examples
 
